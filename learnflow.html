@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnIfy — Learn Anything, Anytime</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --cyan: #00F7FF;
+  --cyan-light: #B0FFFA;
+  --pink: #FF0087;
+  --pink-light: #FF7DB0;
+  --white: #ffffff;
+  --dark: #060612;
+  --dark2: #0D0D22;
+  --dark3: #14142B;
+  --card: #111128;
+  --border: rgba(0,247,255,0.15);
+  --border-pink: rgba(255,0,135,0.2);
+  --text-muted: rgba(255,255,255,0.5);
+  --text-dim: rgba(255,255,255,0.75);
+  --glow-cyan: 0 0 30px rgba(0,247,255,0.4);
+  --glow-pink: 0 0 30px rgba(255,0,135,0.4);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark2); }
+::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+/* ── Grid noise texture ── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background-image: radial-gradient(circle at 20% 20%, rgba(0,247,255,0.06) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(255,0,135,0.06) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav {
+  position: sticky; top:0; z-index: 1000;
+  background: rgba(6,6,18,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 clamp(16px, 4vw, 60px);
+  display: flex; align-items: center; gap: 20px;
+  height: 64px;
+}
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  background: linear-gradient(135deg, var(--cyan), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-search {
+  flex: 1;
+  max-width: 460px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.nav-search input {
+  width: 100%;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 9px 20px 9px 44px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+
+.nav-search input::placeholder { color: var(--text-muted); }
+.nav-search input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0,247,255,0.12);
+}
+
+.nav-search i {
+  position: absolute; left: 16px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted); font-size: 14px;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: 8px;
+  margin-left: auto; flex-shrink: 0;
+}
+
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: color .2s, background .2s;
+}
+
+.nav-links a:hover { color: var(--cyan); background: rgba(0,247,255,0.06); }
+
+.btn-nav {
+  background: linear-gradient(135deg, var(--cyan), #00b8c4);
+  color: var(--dark) !important;
+  font-weight: 600 !important;
+  border-radius: 50px !important;
+  padding: 7px 20px !important;
+}
+
+.btn-nav:hover { box-shadow: var(--glow-cyan); }
+
+.hamburger {
+  display: none;
+  background: none; border: none; cursor: pointer;
+  color: var(--white); font-size: 20px;
+  padding: 6px;
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero {
+  position: relative;
+  padding: clamp(60px,8vw,120px) clamp(16px,4vw,60px) clamp(40px,6vw,80px);
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: .35;
+}
+.hero-glow-1 { width:500px; height:500px; background: var(--cyan); top:-200px; left:-150px; }
+.hero-glow-2 { width:400px; height:400px; background: var(--pink); top:-100px; right:-100px; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,247,255,0.08);
+  border: 1px solid rgba(0,247,255,0.25);
+  border-radius: 50px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 500;
+  margin-bottom: 28px;
+  animation: fadeUp .6s ease both;
+}
+
+.hero-badge span { background: var(--cyan); color: var(--dark); border-radius:50px; padding:2px 8px; font-size:11px; font-weight:700; }
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 6vw, 80px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  max-width: 900px;
+  margin: 0 auto 24px;
+  animation: fadeUp .6s .1s ease both;
+}
+
+.hero h1 .grad {
+  background: linear-gradient(135deg, var(--cyan), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: clamp(15px,2vw,18px);
+  color: var(--text-dim);
+  max-width: 520px;
+  margin: 0 auto 40px;
+  animation: fadeUp .6s .2s ease both;
+}
+
+.hero-cta {
+  display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;
+  animation: fadeUp .6s .3s ease both;
+}
+
+.btn { display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600; border-radius:50px; transition: all .25s; text-decoration:none; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--cyan), #00c9d4);
+  color: var(--dark);
+  padding: 14px 32px;
+  font-size: 15px;
+  box-shadow: 0 4px 24px rgba(0,247,255,0.35);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow: 0 8px 32px rgba(0,247,255,0.5); }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--white);
+  padding: 13px 28px;
+  font-size: 15px;
+}
+.btn-outline:hover { border-color: var(--pink); color: var(--pink); box-shadow: var(--glow-pink); }
+
+.btn-pink {
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  color: var(--white);
+  padding: 14px 32px;
+  font-size: 15px;
+  box-shadow: 0 4px 24px rgba(255,0,135,0.35);
+}
+.btn-pink:hover { transform:translateY(-2px); box-shadow: 0 8px 32px rgba(255,0,135,0.5); }
+
+.hero-stats {
+  display: flex; justify-content: center; gap: clamp(24px,4vw,60px); flex-wrap: wrap;
+  margin-top: 60px;
+  animation: fadeUp .6s .4s ease both;
+}
+
+.stat { text-align:center; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(26px,4vw,40px);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--cyan), var(--cyan-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* ══════════════════════════════════════
+   SECTION SHARED
+══════════════════════════════════════ */
+.section { padding: clamp(40px,6vw,80px) clamp(16px,4vw,60px); position:relative; z-index:1; }
+
+.section-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.section-title span {
+  background: linear-gradient(135deg, var(--cyan), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.see-all {
+  color: var(--cyan); text-decoration:none; font-size:14px; font-weight:500;
+  display:flex; align-items:center; gap:6px; white-space:nowrap;
+  transition: gap .2s;
+}
+.see-all:hover { gap: 10px; }
+
+/* ══════════════════════════════════════
+   CATEGORIES
+══════════════════════════════════════ */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.cat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s;
+  text-decoration: none;
+}
+
+.cat-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-4px);
+  box-shadow: var(--glow-cyan);
+}
+
+.cat-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.cat-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  display: block;
+}
+
+.cat-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: block;
+}
+
+/* ══════════════════════════════════════
+   COURSE CARDS
+══════════════════════════════════════ */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.course-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all .25s;
+  cursor: pointer;
+  position: relative;
+}
+
+.course-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--cyan);
+  box-shadow: 0 12px 40px rgba(0,247,255,0.15);
+}
+
+.course-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.course-thumb-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .4s;
+}
+
+.course-card:hover .course-thumb-img { transform: scale(1.05); }
+
+.course-thumb-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(6,6,18,.8));
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity .25s;
+}
+
+.course-card:hover .course-thumb-overlay { opacity: 1; }
+
+.play-btn {
+  width: 52px; height: 52px;
+  background: rgba(0,247,255,0.9);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  color: var(--dark);
+  transform: scale(.8);
+  transition: transform .2s;
+}
+
+.course-card:hover .play-btn { transform: scale(1); }
+
+.course-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--pink);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 50px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.course-body { padding: 18px; }
+
+.course-cat {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+
+.course-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  color: var(--white);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.course-instructor {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.course-instructor span { color: var(--text-dim); }
+
+.course-meta {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.course-meta i { color: var(--cyan); }
+
+.course-rating { display:flex; align-items:center; gap:4px; }
+.stars { color: #FFD700; font-size: 11px; letter-spacing: 1px; }
+
+.course-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.course-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.price-free { color: #4AFF91; }
+
+.course-price .original {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  font-weight: 400;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-enroll {
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-enroll:hover { box-shadow: 0 4px 20px rgba(255,0,135,0.5); transform: translateY(-1px); }
+
+/* ══════════════════════════════════════
+   FEATURED BANNER
+══════════════════════════════════════ */
+.featured-banner {
+  background: linear-gradient(135deg, rgba(0,247,255,0.08), rgba(255,0,135,0.08));
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: clamp(30px,4vw,60px);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 30px;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.featured-banner::before {
+  content:'';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0,247,255,.12), transparent 70%);
+  right: -50px; top: -80px;
+  border-radius: 50%;
+}
+
+.featured-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--pink);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.featured-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(22px,3vw,36px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+}
+
+.featured-desc {
+  color: var(--text-dim);
+  font-size: 15px;
+  max-width: 500px;
+  margin-bottom: 24px;
+}
+
+.featured-tags {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+}
+
+.tag {
+  background: rgba(0,247,255,0.1);
+  border: 1px solid rgba(0,247,255,0.2);
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.featured-video {
+  width: 260px;
+  max-width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  position: relative;
+}
+
+.featured-video iframe {
+  width: 100%; height: 100%;
+  border: none;
+}
+
+/* ══════════════════════════════════════
+   MODAL — COURSE DETAIL
+══════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(30px);
+  transition: transform .3s;
+}
+
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-header {
+  padding: 24px 28px 0;
+  display: flex; align-items: flex-start; justify-content: space-between; gap:16px;
+}
+
+.modal-close {
+  background: rgba(255,255,255,0.08);
+  border: none; border-radius: 50%;
+  width: 36px; height: 36px;
+  font-size: 16px;
+  cursor: pointer; color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.modal-close:hover { background: var(--pink); }
+
+.modal-body { padding: 20px 28px 28px; }
+
+.modal-video {
+  width: 100%; aspect-ratio: 16/9;
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 20px;
+  background: #000;
+}
+
+.modal-video iframe { width:100%; height:100%; border:none; }
+
+.modal-grid { display:grid; grid-template-columns:1fr 280px; gap:24px; }
+
+.modal-info h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(20px,3vw,28px);
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -.5px;
+}
+
+.modal-tabs {
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin: 20px 0 16px;
+}
+
+.tab-btn {
+  background: none; border: none;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all .2s;
+}
+.tab-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.tab-btn:hover:not(.active) { color: var(--white); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeUp .3s ease; }
+
+.curriculum-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.curriculum-item:last-child { border:none; }
+
+.curriculum-num {
+  width: 28px; height: 28px;
+  background: rgba(0,247,255,.1);
+  border-radius: 50%;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.curriculum-locked { opacity: .4; }
+
+/* ── Exam ── */
+.exam-q {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.exam-q h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.exam-options { display:flex; flex-direction:column; gap:8px; }
+
+.exam-opt {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all .2s;
+}
+.exam-opt:hover { border-color: var(--cyan); background: rgba(0,247,255,0.05); }
+.exam-opt.selected { border-color: var(--cyan); background: rgba(0,247,255,0.1); }
+.exam-opt.correct { border-color: #4AFF91; background: rgba(74,255,145,0.08); }
+.exam-opt.wrong { border-color: var(--pink); background: rgba(255,0,135,0.08); }
+
+.exam-opt-letter {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items:center; justify-content:center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.exam-submit {
+  display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;
+}
+
+.exam-result {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.exam-result.pass { background: rgba(74,255,145,0.1); border: 1px solid rgba(74,255,145,0.3); color: #4AFF91; }
+.exam-result.fail { background: rgba(255,0,135,0.1); border: 1px solid rgba(255,0,135,0.3); color: var(--pink); }
+
+/* ── Payment sidebar ── */
+.payment-card {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  position: sticky;
+  top: 80px;
+}
+
+.payment-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+
+.payment-original {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  margin-bottom: 6px;
+}
+
+.payment-discount {
+  display:inline-block;
+  background: rgba(255,0,135,0.15);
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+}
+
+.payment-features { list-style:none; margin-bottom: 20px; }
+.payment-features li {
+  display:flex; align-items:center; gap:10px;
+  font-size: 13px; color: var(--text-dim);
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.payment-features li:last-child { border:none; }
+.payment-features li i { color: var(--cyan); width:16px; }
+
+.btn-pay {
+  width: 100%;
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .25s;
+  margin-bottom: 10px;
+}
+.btn-pay:hover { box-shadow: 0 8px 28px rgba(255,0,135,0.5); transform: translateY(-2px); }
+
+.payment-guarantee {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ══════════════════════════════════════
+   PAYMENT MODAL
+══════════════════════════════════════ */
+.pay-modal {
+  max-width: 440px;
+}
+
+.pay-modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.pay-modal-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+
+.form-group { margin-bottom: 16px; }
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+.form-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,247,255,0.1); }
+.form-input::placeholder { color: var(--text-muted); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.payment-methods {
+  display: flex; gap: 10px; margin-bottom: 20px; flex-wrap:wrap;
+}
+
+.pay-method {
+  flex: 1; min-width: 80px;
+  background: var(--dark3);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  transition: all .2s;
+}
+.pay-method.selected { border-color: var(--cyan); color: var(--cyan); background: rgba(0,247,255,.05); }
+
+.pay-method i { display:block; font-size:20px; margin-bottom:4px; }
+
+.pay-success {
+  text-align: center;
+  padding: 30px 0;
+}
+
+.pay-success .check-circle {
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, var(--cyan), #00c9d4);
+  border-radius: 50%;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 36px;
+  color: var(--dark);
+  margin: 0 auto 20px;
+}
+
+.pay-success h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+/* ══════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════ */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.testimonial-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: all .25s;
+}
+
+.testimonial-card:hover { border-color: var(--pink-light); transform: translateY(-4px); }
+
+.testimonial-top {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+
+.avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--pink));
+  display: flex; align-items:center; justify-content:center;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--dark);
+  flex-shrink: 0;
+}
+
+.reviewer-name { font-weight: 600; font-size: 14px; }
+.reviewer-role { font-size: 12px; color: var(--text-muted); }
+
+.testimonial-text { font-size: 14px; color: var(--text-dim); line-height: 1.65; font-style: italic; }
+
+/* ══════════════════════════════════════
+   SEARCH PAGE
+══════════════════════════════════════ */
+.search-hero {
+  background: var(--dark2);
+  border-bottom: 1px solid var(--border);
+  padding: 40px clamp(16px,4vw,60px);
+  text-align: center;
+}
+
+.search-hero h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(24px,4vw,48px);
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.search-big {
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-big input {
+  width: 100%;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 50px;
+  padding: 16px 60px 16px 52px;
+  font-size: 16px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+.search-big input:focus { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.search-big input::placeholder { color: var(--text-muted); }
+
+.search-big i { position:absolute; left:20px; top:50%; transform:translateY(-50%); color:var(--cyan); font-size:18px; }
+
+.search-big button {
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  background: linear-gradient(135deg, var(--cyan), #00c9d4);
+  border:none; border-radius:50px;
+  padding:10px 20px;
+  color: var(--dark);
+  font-weight:700; font-size:13px;
+  cursor:pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.filter-row {
+  display: flex; gap: 10px; align-items:center;
+  padding: 16px clamp(16px,4vw,60px);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display:none; }
+
+.filter-chip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+  color: var(--text-dim);
+}
+.filter-chip.active { background: rgba(0,247,255,.12); border-color: var(--cyan); color: var(--cyan); }
+.filter-chip:hover:not(.active) { border-color: rgba(255,255,255,.3); color: var(--white); }
+
+/* ══════════════════════════════════════
+   PAGES (view switching)
+══════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: var(--dark2);
+  border-top: 1px solid var(--border);
+  padding: clamp(40px,5vw,70px) clamp(16px,4vw,60px) 30px;
+  margin-top: 40px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-brand p { color: var(--text-muted); font-size: 14px; margin-top: 12px; max-width: 280px; line-height:1.7; }
+
+.footer-col h4 { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; margin-bottom:14px; }
+
+.footer-col a {
+  display: block; color: var(--text-muted); text-decoration:none;
+  font-size: 14px; margin-bottom: 8px; transition: color .2s;
+}
+.footer-col a:hover { color: var(--cyan); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap: wrap; gap: 12px;
+  font-size: 13px; color: var(--text-muted);
+}
+
+.socials { display:flex; gap:12px; }
+.socials a {
+  width:36px; height:36px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color: var(--text-dim);
+  text-decoration:none;
+  font-size:14px;
+  transition: all .2s;
+}
+.socials a:hover { border-color:var(--cyan); color:var(--cyan); }
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+  background: var(--card);
+  border: 1px solid var(--cyan);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex; align-items:center; gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  max-width: 320px;
+  box-shadow: var(--glow-cyan);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast i { color: var(--cyan); font-size:18px; }
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+@keyframes pulse {
+  0%,100% { opacity:.6; }
+  50%     { opacity:1; }
+}
+
+.pulse { animation: pulse 2s ease infinite; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media(max-width:900px) {
+  .modal-grid { grid-template-columns: 1fr; }
+  .payment-card { position: static; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .featured-banner { grid-template-columns:1fr; }
+  .featured-video { width:100%; }
+}
+
+@media(max-width:640px) {
+  .nav-links { display:none; }
+  .nav-links.open { display:flex; flex-direction:column; position:fixed; top:64px; right:0; background:var(--dark2); border-left:1px solid var(--border); border-bottom:1px solid var(--border); padding:16px; gap:4px; z-index:999; border-radius:0 0 0 16px; }
+  .hamburger { display:flex; }
+  .footer-grid { grid-template-columns:1fr; gap:28px; }
+  .form-row { grid-template-columns:1fr; }
+  .hero-stats { gap:24px; }
+}
+
+/* Divider */
+.divider {
+  height:1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0 clamp(16px,4vw,60px);
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a class="nav-logo" href="#">⚡ LearnIfy</a>
+  <div class="nav-search">
+    <i class="fa fa-search"></i>
+    <input type="text" placeholder="Search courses, topics, instructors…" id="navSearchInput" oninput="liveSearch(this.value)" onfocus="showPage('search')">
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('search')">Courses</a>
+    <a href="#" onclick="showPage('dashboard')">My Learning</a>
+    <a href="#" class="btn-nav" onclick="openPayModal(null, true)">Get Started</a>
+  </div>
+  <button class="hamburger" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+</nav>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"><i class="fa fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<!-- ══════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-glow hero-glow-1"></div>
+    <div class="hero-glow hero-glow-2"></div>
+
+    <div class="hero-badge"><span>NEW</span> 2,400+ courses added this month</div>
+    <h1>Learn Without Limits.<br>Skills That <span class="grad">Actually Pay.</span></h1>
+    <p>Unlock world-class courses in tech, design, business & more. Learn at your own pace with HD video, exams & certificates.</p>
+    <div class="hero-cta">
+      <a href="#" class="btn btn-primary" onclick="showPage('search')"><i class="fa fa-rocket"></i> Browse Courses</a>
+      <a href="#" class="btn btn-outline" onclick="openPayModal(null, true)"><i class="fab fa-youtube"></i> Watch Free Preview</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">54K+</div><div class="stat-label">Active Learners</div></div>
+      <div class="stat"><div class="stat-num">1,200+</div><div class="stat-label">Courses</div></div>
+      <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Satisfaction Rate</div></div>
+      <div class="stat"><div class="stat-num">340+</div><div class="stat-label">Expert Instructors</div></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Categories -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Explore <span>Categories</span></h2>
+      <a href="#" class="see-all" onclick="showPage('search')">All categories <i class="fa fa-arrow-right"></i></a>
+    </div>
+    <div class="categories-grid" id="categoriesGrid"></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Featured -->
+  <section class="section">
+    <div class="featured-banner">
+      <div>
+        <div class="featured-label">⚡ Featured Course of the Month</div>
+        <div class="featured-title">Full-Stack Web Development<br>Bootcamp 2025</div>
+        <div class="featured-desc">Master React, Node.js, PostgreSQL & more. Build 15 real projects and land your dream dev job.</div>
+        <div class="featured-tags">
+          <span class="tag">React</span><span class="tag">Node.js</span><span class="tag">SQL</span><span class="tag">REST API</span><span class="tag">Deployment</span>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary" onclick="openCourseModal(courses[0])"><i class="fa fa-play"></i> Start Learning</button>
+          <span style="color:var(--cyan-light);font-size:15px;font-weight:700;">KSh 2,999 <span style="color:var(--text-muted);text-decoration:line-through;font-size:13px;font-weight:400;">KSh 8,999</span></span>
+        </div>
+      </div>
+      <div class="featured-video">
+        <iframe src="https://www.youtube.com/embed/nu_pCVPKzTk?autoplay=0&mute=1" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Popular Courses -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">🔥 Popular <span>Courses</span></h2>
+      <a href="#" class="see-all" onclick="showPage('search')">See all <i class="fa fa-arrow-right"></i></a>
+    </div>
+    <div class="courses-grid" id="homeCoursesGrid"></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Testimonials -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">What Learners <span>Say</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-top">
+          <div class="avatar">AK</div>
+          <div><div class="reviewer-name">Amina Kamau</div><div class="reviewer-role">Software Engineer, Nairobi</div></div>
+        </div>
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text" style="margin-top:8px;">"LearnIfy completely changed my career. The Full-Stack course was practical and the exam at the end really tested my knowledge. Got hired 2 months after finishing!"</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-top">
+          <div class="avatar" style="background:linear-gradient(135deg,var(--pink),var(--pink-light))">BM</div>
+          <div><div class="reviewer-name">Brian Mwangi</div><div class="reviewer-role">UI/UX Designer</div></div>
+        </div>
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-text" style="margin-top:8px;">"The design courses are incredible. Loved how each lesson links to relevant YouTube resources. The search feature helped me find exactly what I needed."</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-top">
+          <div class="avatar" style="background:linear-gradient(135deg,#8B5CF6,var(--pink))">FO</div>
+          <div><div class="reviewer-name">Fatuma Omar</div><div class="reviewer-role">Data Analyst</div></div>
+        </div>
+        <div class="stars">★★★★☆</div>
+        <div class="testimonial-text" style="margin-top:8px;">"The Python data science path was well structured and fun. Payment was seamless and I was in the course in minutes. The certificate is a great bonus!"</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">⚡ LearnIfy</div>
+        <p>Empowering learners across Africa and beyond with world-class courses. Learn, grow, and build your future.</p>
+        <div class="socials" style="margin-top:16px;">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <a href="#">Web Development</a>
+        <a href="#">Data Science</a>
+        <a href="#">Design</a>
+        <a href="#">Business</a>
+        <a href="#">Marketing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+        <a href="#">Partners</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Refunds</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 LearnIfy. All rights reserved.</span>
+      <span style="color:var(--cyan);">Made with ❤️ for African Learners</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: SEARCH
+══════════════════════════════════════ -->
+<div class="page" id="page-search">
+  <div class="search-hero">
+    <h2>Find Your Next <span style="background:linear-gradient(135deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Course</span></h2>
+    <div class="search-big">
+      <i class="fa fa-search"></i>
+      <input type="text" id="searchInput" placeholder="e.g. Python, Graphic Design, Excel…" oninput="filterCourses(this.value)">
+      <button onclick="filterCourses(document.getElementById('searchInput').value)">Search</button>
+    </div>
+  </div>
+  <div class="filter-row" id="filterRow"></div>
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title" id="searchResultTitle">All <span>Courses</span></h2>
+    </div>
+    <div class="courses-grid" id="searchCoursesGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: DASHBOARD
+══════════════════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">My <span>Learning</span></h2>
+    </div>
+    <div id="dashboardContent">
+      <div style="text-align:center;padding:80px 20px;color:var(--text-muted);">
+        <i class="fa fa-graduation-cap" style="font-size:60px;color:var(--border);margin-bottom:20px;display:block;"></i>
+        <p style="font-size:18px;margin-bottom:20px;">You haven't enrolled in any courses yet.</p>
+        <button class="btn btn-primary" onclick="showPage('search')"><i class="fa fa-search"></i> Browse Courses</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     COURSE DETAIL MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="courseModal" onclick="closeCourseModalOutside(event)">
+  <div class="modal" id="courseModalInner">
+    <div class="modal-header">
+      <div>
+        <div class="course-cat" id="mCat"></div>
+        <div style="font-family:'Syne',sans-serif;font-size:11px;color:var(--text-muted);">Course Details</div>
+      </div>
+      <button class="modal-close" onclick="closeCourseModal()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-video">
+        <iframe id="mVideo" src="" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="modal-grid">
+        <div class="modal-info">
+          <h2 id="mTitle"></h2>
+          <p id="mInstructor" style="font-size:13px;color:var(--text-muted);margin-bottom:8px;"></p>
+          <div id="mMeta" class="course-meta"></div>
+
+          <div class="modal-tabs">
+            <button class="tab-btn active" onclick="switchTab(this,'overview')">Overview</button>
+            <button class="tab-btn" onclick="switchTab(this,'curriculum')">Curriculum</button>
+            <button class="tab-btn" onclick="switchTab(this,'exam')">Exam</button>
+          </div>
+
+          <div class="tab-panel active" id="tab-overview">
+            <p id="mDesc" style="color:var(--text-dim);font-size:14px;line-height:1.7;"></p>
+            <ul id="mOutcomes" style="margin-top:14px;padding-left:18px;color:var(--text-dim);font-size:14px;line-height:2;"></ul>
+          </div>
+
+          <div class="tab-panel" id="tab-curriculum">
+            <div id="mCurriculum"></div>
+          </div>
+
+          <div class="tab-panel" id="tab-exam">
+            <div id="mExam"></div>
+            <div class="exam-submit" id="examSubmitRow" style="display:none;">
+              <button class="btn btn-primary" onclick="submitExam()"><i class="fa fa-check"></i> Submit Answers</button>
+              <button class="btn btn-outline" onclick="resetExam()"><i class="fa fa-redo"></i> Reset</button>
+            </div>
+            <div id="examResult"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="payment-card" id="paymentCard">
+            <div class="payment-price" id="mPrice"></div>
+            <div class="payment-original" id="mOriginal"></div>
+            <div class="payment-discount" id="mDiscount"></div>
+            <ul class="payment-features">
+              <li><i class="fa fa-infinity"></i> Lifetime access</li>
+              <li><i class="fa fa-mobile-alt"></i> Mobile & desktop</li>
+              <li><i class="fab fa-youtube"></i> HD video lessons</li>
+              <li><i class="fa fa-file-alt"></i> Downloadable resources</li>
+              <li><i class="fa fa-certificate"></i> Certificate of completion</li>
+              <li><i class="fa fa-comments"></i> Community access</li>
+            </ul>
+            <button class="btn-pay" id="enrollBtn" onclick="initiateEnroll()"><i class="fa fa-lock"></i> Enroll Now</button>
+            <div class="payment-guarantee"><i class="fa fa-shield-alt"></i> 30-day money-back guarantee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAYMENT MODAL ══ -->
+<div class="modal-overlay" id="payModal" onclick="closePayModalOutside(event)">
+  <div class="modal pay-modal" id="payModalInner">
+    <div class="modal-header">
+      <div class="pay-modal-title" id="payTitle">Complete Your Enrollment</div>
+      <button class="modal-close" onclick="closePayModal()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="payModalBody">
+      <div class="pay-modal-sub" id="paySubtitle">You're one step away from starting your journey!</div>
+
+      <div id="payForm">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" placeholder="Jane Doe" id="payName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="jane@example.com" id="payEmail">
+        </div>
+
+        <div class="form-label" style="margin-bottom:10px;">Payment Method</div>
+        <div class="payment-methods">
+          <div class="pay-method selected" onclick="selectPayMethod(this)"><i class="fa fa-credit-card"></i>Card</div>
+          <div class="pay-method" onclick="selectPayMethod(this)"><i class="fa fa-mobile-alt"></i>M-Pesa</div>
+          <div class="pay-method" onclick="selectPayMethod(this)"><i class="fab fa-paypal"></i>PayPal</div>
+        </div>
+
+        <div id="cardFields">
+          <div class="form-group">
+            <label class="form-label">Card Number</label>
+            <input class="form-input" type="text" placeholder="4242 4242 4242 4242" maxlength="19" oninput="formatCard(this)">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Expiry</label>
+              <input class="form-input" type="text" placeholder="MM/YY" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVV</label>
+              <input class="form-input" type="text" placeholder="123" maxlength="3">
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,247,255,0.06);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:14px;color:var(--text-dim);">Total due today</span>
+          <span style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--cyan);" id="payTotal"></span>
+        </div>
+
+        <button class="btn-pay" onclick="processPayment()"><i class="fa fa-lock"></i> Pay & Enroll Now</button>
+      </div>
+
+      <div class="pay-success" id="paySuccess" style="display:none;">
+        <div class="check-circle">✓</div>
+        <h3>You're Enrolled! 🎉</h3>
+        <p style="color:var(--text-dim);font-size:14px;margin-bottom:24px;">A confirmation has been sent to your email. Start learning now!</p>
+        <button class="btn btn-primary" onclick="goToLearn()"><i class="fa fa-play"></i> Start Learning</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+const categories = [
+  {icon:'💻', name:'Web Dev',    count:'214 courses'},
+  {icon:'📊', name:'Data Science',count:'98 courses'},
+  {icon:'🎨', name:'Design',     count:'143 courses'},
+  {icon:'📱', name:'Mobile Dev', count:'76 courses'},
+  {icon:'🤖', name:'AI & ML',    count:'112 courses'},
+  {icon:'💼', name:'Business',   count:'189 courses'},
+  {icon:'📣', name:'Marketing',  count:'95 courses'},
+  {icon:'🔒', name:'Cybersecurity',count:'58 courses'},
+  {icon:'☁️', name:'Cloud',      count:'67 courses'},
+  {icon:'📷', name:'Photography',count:'44 courses'},
+  {icon:'🎬', name:'Video Editing',count:'38 courses'},
+  {icon:'📝', name:'Writing',    count:'52 courses'},
+];
+
+const courses = [
+  {
+    id:1, title:'Full-Stack Web Development Bootcamp 2025', instructor:'Alex Morgan',
+    category:'Web Dev', price:'KSh 2,999', original:'KSh 8,999', discount:'67% OFF',
+    rating:4.8, reviews:4210, students:'18K', hours:'62', lectures:'240',
+    badge:'BESTSELLER', free: false,
+    thumb:'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80',
+    video:'https://www.youtube.com/embed/nu_pCVPKzTk',
+    desc:'The most comprehensive web dev course on the platform. Learn HTML, CSS, JavaScript, React, Node.js, SQL and deploy to the cloud. Includes 15 portfolio projects.',
+    outcomes:['Build full-stack apps from scratch','Master React & Node.js','Work with databases (SQL & MongoDB)','Deploy apps to AWS & Vercel','Build REST APIs & GraphQL'],
+    curriculum:[
+      'Introduction to Web Development','HTML5 Deep Dive','CSS3 & Flexbox & Grid',
+      'JavaScript Essentials','DOM Manipulation','React Fundamentals',
+      'React Hooks & Context','Node.js & Express','MongoDB & PostgreSQL',
+      'REST API Design','Authentication & JWT','Deployment & CI/CD'
+    ],
+    exam:[
+      {q:'Which HTML tag is used to define an internal style sheet?',opts:['<css>','<style>','<script>','<link>'],answer:1},
+      {q:'What does CSS stand for?',opts:['Cascading Style Sheets','Computer Style Sheets','Creative Style Sheets','Colorful Style Sheets'],answer:0},
+      {q:'Which JS method adds an element to the end of an array?',opts:['push()','pop()','shift()','splice()'],answer:0},
+      {q:'React components must return a single _____ element.',opts:['div','HTML','root','parent'],answer:3},
+    ]
+  },
+  {
+    id:2, title:'Python for Data Science & Machine Learning', instructor:'Dr. Sarah Lin',
+    category:'Data Science', price:'KSh 1,999', original:'KSh 5,999', discount:'67% OFF',
+    rating:4.9, reviews:6100, students:'24K', hours:'44', lectures:'180',
+    badge:'TOP RATED', free:false,
+    thumb:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80',
+    video:'https://www.youtube.com/embed/LHBE6Q9oYFs',
+    desc:'Master Python for data analysis, visualization and machine learning. Work with real datasets using Pandas, NumPy, Matplotlib, Scikit-Learn and TensorFlow.',
+    outcomes:['Analyze data with Pandas','Build ML models with Scikit-Learn','Visualize data with Seaborn','Deep learning with TensorFlow','Kaggle competition skills'],
+    curriculum:['Python Fundamentals','NumPy Arrays','Pandas DataFrames','Data Visualization','Statistics & Probability','Supervised Learning','Unsupervised Learning','Neural Networks','NLP Basics','Capstone Project'],
+    exam:[
+      {q:'Which library is used for data manipulation in Python?',opts:['NumPy','Pandas','Matplotlib','Seaborn'],answer:1},
+      {q:'What type of learning uses labeled data?',opts:['Unsupervised','Reinforcement','Supervised','Transfer'],answer:2},
+      {q:'Which function reads a CSV file in Pandas?',opts:['read_file()','open_csv()','read_csv()','load_csv()'],answer:2},
+    ]
+  },
+  {
+    id:3, title:'UI/UX Design Masterclass: From Zero to Pro', instructor:'Maria Rossi',
+    category:'Design', price:'KSh 2,499', original:'KSh 6,999', discount:'64% OFF',
+    rating:4.7, reviews:3850, students:'15K', hours:'38', lectures:'150',
+    badge:'', free:false,
+    thumb:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80',
+    video:'https://www.youtube.com/embed/c9Wg6Cb_YlU',
+    desc:'Learn the complete UI/UX design process using Figma. Create wireframes, prototypes and high-fidelity designs. Study user research, information architecture and design systems.',
+    outcomes:['Design in Figma end to end','Conduct user research','Create wireframes & prototypes','Build design systems','Present designs to stakeholders'],
+    curriculum:['Design Thinking','User Research Methods','Wireframing','Figma Basics','Typography & Color','Prototyping','Usability Testing','Design Systems','Handoff to Developers'],
+    exam:[
+      {q:'What does UX stand for?',opts:['User Experience','Unique Exchange','Unified Extension','User Expert'],answer:0},
+      {q:'Which tool is most popular for UI design in 2025?',opts:['Photoshop','Sketch','Figma','Adobe XD'],answer:2},
+      {q:'A wireframe is a _____ representation of a design.',opts:['High-fidelity','Low-fidelity','Colorful','Final'],answer:1},
+    ]
+  },
+  {
+    id:4, title:'Excel & Google Sheets for Business Intelligence', instructor:'James Omondi',
+    category:'Business', price:'KSh 999', original:'KSh 2,999', discount:'67% OFF',
+    rating:4.6, reviews:2100, students:'12K', hours:'22', lectures:'90',
+    badge:'', free:false,
+    thumb:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80',
+    video:'https://www.youtube.com/embed/rwbho0CgEAI',
+    desc:'Master Excel & Google Sheets for business reporting, data analysis and dashboards. Learn VLOOKUP, PivotTables, Power Query, macros and more.',
+    outcomes:['Build dynamic dashboards','Master VLOOKUP & INDEX-MATCH','Automate tasks with Macros','Use Power Query for ETL','Create management reports'],
+    curriculum:['Excel Basics','Formulas Deep Dive','VLOOKUP & XLOOKUP','PivotTables','Charts & Visualization','Power Query','Macros & VBA','Google Sheets'],
+    exam:[
+      {q:'Which function looks up a value in a table by row?',opts:['INDEX','MATCH','VLOOKUP','SUM'],answer:2},
+      {q:'What does a PivotTable summarize?',opts:['Images','Large datasets','Text','Formulas'],answer:1},
+      {q:'VBA stands for?',opts:['Visual Basic for Applications','Visual Browser App','Very Basic Analytics','Virtual Business App'],answer:0},
+    ]
+  },
+  {
+    id:5, title:'Digital Marketing & Social Media Mastery', instructor:'Priya Sharma',
+    category:'Marketing', price:'KSh 1,499', original:'KSh 4,499', discount:'67% OFF',
+    rating:4.5, reviews:1800, students:'9K', hours:'28', lectures:'110',
+    badge:'', free:false,
+    thumb:'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=600&q=80',
+    video:'https://www.youtube.com/embed/nU-IIXmqnKQ',
+    desc:'Learn to grow businesses online using SEO, Meta Ads, Google Ads, email marketing and content strategy. Build complete marketing campaigns from scratch.',
+    outcomes:['Run profitable Facebook & Google Ads','SEO & content strategy','Email marketing funnels','Analytics & reporting','Brand building on social media'],
+    curriculum:['Marketing Fundamentals','SEO Essentials','Google Ads','Meta Ads','Email Marketing','Content Strategy','Analytics','E-Commerce Marketing'],
+    exam:[
+      {q:'What does SEO stand for?',opts:['Search Engine Optimization','Social Engagement Online','Site Enhancement Operations','Search Email Outreach'],answer:0},
+      {q:'Which metric measures clicks vs impressions?',opts:['CPC','CTR','CPM','ROAS'],answer:1},
+      {q:'A/B testing compares _____ versions of content.',opts:['Three','Multiple','Two','Unlimited'],answer:2},
+    ]
+  },
+  {
+    id:6, title:'Flutter App Development — Build iOS & Android Apps', instructor:'Kevin Maina',
+    category:'Mobile Dev', price:'KSh 2,299', original:'KSh 6,499', discount:'65% OFF',
+    rating:4.8, reviews:2900, students:'11K', hours:'48', lectures:'200',
+    badge:'NEW', free:false,
+    thumb:'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&q=80',
+    video:'https://www.youtube.com/embed/VPvVD8t02U8',
+    desc:'Build beautiful native apps for iOS and Android using Flutter & Dart. Learn state management, Firebase integration, REST APIs and app store publishing.',
+    outcomes:['Build iOS & Android from one codebase','Master Flutter widgets','State management with Provider & Riverpod','Firebase integration','Publish to App & Play Store'],
+    curriculum:['Dart Language','Flutter Basics','Widgets Deep Dive','Navigation','State Management','HTTP & APIs','Firebase','SQLite','Publishing'],
+    exam:[
+      {q:'Flutter uses which programming language?',opts:['JavaScript','Kotlin','Dart','Swift'],answer:2},
+      {q:'Which widget is used for scrollable lists in Flutter?',opts:['Column','ListView','Stack','Row'],answer:1},
+      {q:'Firebase provides which backend service?',opts:['Local storage only','Cloud database & auth','Only notifications','Payment gateway'],answer:1},
+    ]
+  },
+  {
+    id:7, title:'AI & Prompt Engineering for Everyone', instructor:'Dr. Aisha Patel',
+    category:'AI & ML', price:'FREE', original:'', discount:'',
+    rating:4.9, reviews:5200, students:'28K', hours:'12', lectures:'45',
+    badge:'FREE', free:true,
+    thumb:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80',
+    video:'https://www.youtube.com/embed/JTxsNm9IdYU',
+    desc:'Learn how to effectively use ChatGPT, Claude, Gemini and other AI tools for productivity, coding, writing and business. Master prompt engineering techniques.',
+    outcomes:['Write effective prompts','Use AI for coding & writing','Automate workflows with AI','Understand LLMs','Build AI-powered workflows'],
+    curriculum:['What is AI?','LLMs Explained','Prompt Engineering Basics','Advanced Prompting','AI for Developers','AI for Creators','AI Safety & Ethics'],
+    exam:[
+      {q:'What does LLM stand for?',opts:['Large Language Model','Linear Learning Machine','Language Logic Module','Layered Learning Method'],answer:0},
+      {q:'Prompt engineering helps AI produce _____ outputs.',opts:['Random','Better','Slower','Encrypted'],answer:1},
+      {q:'Which company makes Claude AI?',opts:['OpenAI','Google','Anthropic','Meta'],answer:2},
+    ]
+  },
+  {
+    id:8, title:'Cybersecurity Fundamentals & Ethical Hacking', instructor:'Ruto Kipchoge',
+    category:'Cybersecurity', price:'KSh 3,499', original:'KSh 9,999', discount:'65% OFF',
+    rating:4.7, reviews:1450, students:'7K', hours:'55', lectures:'210',
+    badge:'', free:false,
+    thumb:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=80',
+    video:'https://www.youtube.com/embed/3Kq1MIfTWCE',
+    desc:'Learn cybersecurity from the ground up. Network security, ethical hacking, penetration testing, OWASP vulnerabilities and defensive strategies.',
+    outcomes:['Understand network security','Perform ethical penetration tests','Use Kali Linux tools','Identify OWASP Top 10','Prepare for CEH certification'],
+    curriculum:['Security Fundamentals','Networking','Linux for Security','Reconnaissance','Scanning & Enumeration','Exploitation','Web App Hacking','Post Exploitation','Reporting'],
+    exam:[
+      {q:'What does OWASP stand for?',opts:['Open Web App Security Project','Online Web Attack Security Protocol','Open Wireless Application System Protocol','Organized Web Application Scan Platform'],answer:0},
+      {q:'Which tool is commonly used for network scanning?',opts:['Photoshop','Nmap','Excel','Figma'],answer:1},
+      {q:'Ethical hacking requires _____ from the target organization.',opts:['Nothing','Permission','Payment','A NDA only'],answer:1},
+    ]
+  },
+];
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let currentCourse = null;
+let enrolledCourses = JSON.parse(localStorage.getItem('enrolled') || '[]');
+let examAnswers = {};
+let payingCourse = null;
+let selectedFilter = 'All';
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderCategories();
+  renderHomeCourses();
+  renderSearchCourses(courses);
+  buildFilterChips();
+  updateDashboard();
+});
+
+// ══════════════════════════════════════
+// PAGE SWITCHING
+// ══════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (name === 'dashboard') updateDashboard();
+}
+
+// ══════════════════════════════════════
+// CATEGORIES
+// ══════════════════════════════════════
+function renderCategories() {
+  const grid = document.getElementById('categoriesGrid');
+  grid.innerHTML = categories.map(c => `
+    <a class="cat-card" href="#" onclick="filterByCategory('${c.name}');showPage('search');return false;">
+      <span class="cat-icon">${c.icon}</span>
+      <span class="cat-name">${c.name}</span>
+      <span class="cat-count">${c.count}</span>
+    </a>`).join('');
+}
+
+// ══════════════════════════════════════
+// COURSE CARDS
+// ══════════════════════════════════════
+function courseCardHTML(c) {
+  const enrolled = enrolledCourses.includes(c.id);
+  return `
+  <div class="course-card" onclick="openCourseModal(courses.find(x=>x.id===${c.id}))">
+    <div class="course-thumb" style="position:relative;">
+      ${c.badge ? `<div class="course-badge">${c.badge}</div>` : ''}
+      <img class="course-thumb-img" src="${c.thumb}" alt="${c.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80'">
+      <div class="course-thumb-overlay">
+        <div class="play-btn"><i class="fa fa-play"></i></div>
+      </div>
+    </div>
+    <div class="course-body">
+      <div class="course-cat">${c.category}</div>
+      <div class="course-title">${c.title}</div>
+      <div class="course-instructor">By <span>${c.instructor}</span></div>
+      <div class="course-meta">
+        <div class="course-rating"><span class="stars">★★★★★</span> <span>${c.rating}</span> <span style="color:var(--text-muted)">(${(c.reviews/1000).toFixed(1)}k)</span></div>
+        <span><i class="fa fa-clock"></i> ${c.hours}h</span>
+        <span><i class="fa fa-play-circle"></i> ${c.lectures}</span>
+      </div>
+      <div class="course-footer">
+        <div class="course-price">
+          <span class="${c.free ? 'price-free' : ''}">${c.price}</span>
+          ${c.original ? `<br><span class="original">${c.original}</span>` : ''}
+        </div>
+        <button class="btn-enroll" onclick="event.stopPropagation();${enrolled ? "openCourseModal(courses.find(x=>x.id==="+c.id+"))" : "openPayModal(courses.find(x=>x.id==="+c.id+"))"}">
+          ${enrolled ? '<i class="fa fa-play"></i> Continue' : (c.free ? '<i class="fa fa-bolt"></i> Enroll Free' : '<i class="fa fa-lock"></i> Enroll')}
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHomeCourses() {
+  document.getElementById('homeCoursesGrid').innerHTML = courses.slice(0,6).map(courseCardHTML).join('');
+}
+
+function renderSearchCourses(list) {
+  const grid = document.getElementById('searchCoursesGrid');
+  if (list.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted);">
+      <i class="fa fa-search" style="font-size:48px;display:block;margin-bottom:16px;color:var(--border);"></i>
+      <p>No courses found. Try a different search term.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(courseCardHTML).join('');
+}
+
+// ══════════════════════════════════════
+// SEARCH & FILTER
+// ══════════════════════════════════════
+function buildFilterChips() {
+  const cats = ['All', ...new Set(courses.map(c => c.category))];
+  document.getElementById('filterRow').innerHTML = cats.map(cat => `
+    <div class="filter-chip ${cat === 'All' ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</div>`).join('');
+}
+
+function filterByCategory(cat) {
+  selectedFilter = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent === cat);
+  });
+  const query = document.getElementById('searchInput')?.value || '';
+  filterCourses(query);
+}
+
+function filterCourses(q) {
+  const query = q.toLowerCase();
+  let filtered = courses;
+  if (selectedFilter && selectedFilter !== 'All') {
+    filtered = filtered.filter(c => c.category === selectedFilter);
+  }
+  if (query) {
+    filtered = filtered.filter(c =>
+      c.title.toLowerCase().includes(query) ||
+      c.category.toLowerCase().includes(query) ||
+      c.instructor.toLowerCase().includes(query)
+    );
+  }
+  const title = filtered.length === courses.length ? 'All' : (query ? `Results for "${q}"` : selectedFilter);
+  document.getElementById('searchResultTitle').innerHTML = `${title} <span>Courses</span>`;
+  renderSearchCourses(filtered);
+}
+
+function liveSearch(q) {
+  document.getElementById('searchInput').value = q;
+  filterCourses(q);
+}
+
+// ══════════════════════════════════════
+// COURSE MODAL
+// ══════════════════════════════════════
+function openCourseModal(course) {
+  if (!course) return;
+  currentCourse = course;
+  const enrolled = enrolledCourses.includes(course.id);
+
+  document.getElementById('mCat').textContent = course.category;
+  document.getElementById('mTitle').textContent = course.title;
+  document.getElementById('mInstructor').textContent = `Instructor: ${course.instructor}`;
+  document.getElementById('mVideo').src = course.video + '?rel=0';
+  document.getElementById('mDesc').textContent = course.desc;
+  document.getElementById('mPrice').innerHTML = `<span class="${course.free ? 'price-free' : ''}">${course.price}</span>`;
+  document.getElementById('mOriginal').textContent = course.original || '';
+  document.getElementById('mDiscount').textContent = course.discount || '';
+  document.getElementById('mMeta').innerHTML = `
+    <span class="course-rating"><span class="stars">★★★★★</span> ${course.rating} (${course.reviews.toLocaleString()} reviews)</span>
+    <span><i class="fa fa-users"></i> ${course.students} students</span>
+    <span><i class="fa fa-clock"></i> ${course.hours}h</span>
+    <span><i class="fa fa-play-circle"></i> ${course.lectures} lectures</span>`;
+
+  document.getElementById('mOutcomes').innerHTML = course.outcomes.map(o => `<li>✅ ${o}</li>`).join('');
+
+  // Curriculum
+  document.getElementById('mCurriculum').innerHTML = course.curriculum.map((item, i) => `
+    <div class="curriculum-item ${i > 2 && !enrolled ? 'curriculum-locked' : ''}">
+      <div class="curriculum-num">${i+1}</div>
+      <span>${item}</span>
+      ${i > 2 && !enrolled ? '<i class="fa fa-lock" style="margin-left:auto;font-size:12px;color:var(--text-muted);"></i>' : '<i class="fa fa-play" style="margin-left:auto;font-size:12px;color:var(--cyan);"></i>'}
+    </div>`).join('');
+
+  // Exam
+  buildExam(course, enrolled);
+
+  // Payment card
+  document.getElementById('enrollBtn').innerHTML = enrolled
+    ? '<i class="fa fa-play"></i> Continue Learning'
+    : '<i class="fa fa-lock"></i> Enroll Now';
+  document.getElementById('enrollBtn').onclick = enrolled
+    ? () => { closeCourseModal(); showPage('dashboard'); }
+    : () => initiateEnroll();
+
+  // Reset tabs
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[0].classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-overview').classList.add('active');
+
+  document.getElementById('courseModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCourseModal() {
+  document.getElementById('courseModal').classList.remove('open');
+  document.getElementById('mVideo').src = '';
+  document.body.style.overflow = '';
+}
+
+function closeCourseModalOutside(e) {
+  if (e.target === document.getElementById('courseModal')) closeCourseModal();
+}
+
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + tabId).classList.add('active');
+}
+
+// ══════════════════════════════════════
+// EXAM
+// ══════════════════════════════════════
+function buildExam(course, enrolled) {
+  examAnswers = {};
+  const container = document.getElementById('mExam');
+  const submitRow = document.getElementById('examSubmitRow');
+  document.getElementById('examResult').innerHTML = '';
+
+  if (!enrolled) {
+    container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
+      <i class="fa fa-lock" style="font-size:48px;display:block;margin-bottom:16px;color:var(--border);"></i>
+      <p style="margin-bottom:16px;">Enroll to access the exam and test your knowledge.</p>
+      <button class="btn btn-primary" onclick="initiateEnroll()"><i class="fa fa-lock"></i> Enroll to Unlock</button></div>`;
+    submitRow.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = course.exam.map((q, qi) => `
+    <div class="exam-q" id="eq-${qi}">
+      <h4>Q${qi+1}. ${q.q}</h4>
+      <div class="exam-options">
+        ${q.opts.map((opt, oi) => `
+          <div class="exam-opt" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi},${q.answer})">
+            <div class="exam-opt-letter">${['A','B','C','D'][oi]}</div>
+            <span>${opt}</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+  submitRow.style.display = 'flex';
+}
+
+function selectOpt(qi, oi, answer) {
+  // Clear previous selection for this question
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    if (el) el.classList.remove('selected');
+  }
+  const el = document.getElementById(`opt-${qi}-${oi}`);
+  if (el) el.classList.add('selected');
+  examAnswers[qi] = oi;
+}
+
+function submitExam() {
+  if (!currentCourse) return;
+  const total = currentCourse.exam.length;
+  let correct = 0;
+  currentCourse.exam.forEach((q, qi) => {
+    const chosen = examAnswers[qi];
+    for (let oi = 0; oi < q.opts.length; oi++) {
+      const el = document.getElementById(`opt-${qi}-${oi}`);
+      if (!el) continue;
+      el.classList.remove('selected');
+      if (oi === q.answer) el.classList.add('correct');
+      else if (oi === chosen && chosen !== q.answer) el.classList.add('wrong');
+    }
+    if (chosen === q.answer) correct++;
+  });
+  const pct = Math.round((correct/total)*100);
+  const pass = pct >= 70;
+  document.getElementById('examResult').innerHTML = `
+    <div class="exam-result ${pass ? 'pass' : 'fail'}">
+      ${pass ? '🎉' : '📚'} You scored <strong>${correct}/${total} (${pct}%)</strong> — ${pass ? 'Passed! Certificate unlocked.' : 'Not quite. Review and try again!'}
+    </div>`;
+  document.getElementById('examSubmitRow').style.display = 'none';
+  if (pass) showToast('🏆 Exam passed! Certificate earned.');
+}
+
+function resetExam() {
+  buildExam(currentCourse, enrolledCourses.includes(currentCourse.id));
+}
+
+// ══════════════════════════════════════
+// PAYMENT
+// ══════════════════════════════════════
+function initiateEnroll() {
+  if (!currentCourse) return;
+  openPayModal(currentCourse, false);
+}
+
+function openPayModal(course, isSignup) {
+  payingCourse = course;
+  document.getElementById('payForm').style.display = 'block';
+  document.getElementById('paySuccess').style.display = 'none';
+  document.getElementById('payTitle').textContent = isSignup ? 'Start Your Learning Journey' : `Enroll in Course`;
+  document.getElementById('paySubtitle').textContent = isSignup
+    ? 'Join 54,000+ learners today!'
+    : (course ? course.title : '');
+  document.getElementById('payTotal').textContent = course ? course.price : 'KSh 1,999';
+  document.getElementById('payModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePayModal() {
+  document.getElementById('payModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closePayModalOutside(e) {
+  if (e.target === document.getElementById('payModal')) closePayModal();
+}
+
+function selectPayMethod(el) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  const isCard = el.textContent.trim() === 'Card';
+  document.getElementById('cardFields').style.display = isCard ? 'block' : 'none';
+}
+
+function formatCard(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+
+function processPayment() {
+  const name = document.getElementById('payName').value;
+  const email = document.getElementById('payEmail').value;
+  if (!name || !email) { showToast('Please fill in your name and email.', true); return; }
+
+  // Simulate payment
+  document.getElementById('payForm').innerHTML = `
+    <div style="text-align:center;padding:30px 0;">
+      <div class="pulse" style="font-size:48px;margin-bottom:16px;">⏳</div>
+      <p style="color:var(--text-dim);">Processing payment…</p>
+    </div>`;
+
+  setTimeout(() => {
+    if (payingCourse && !enrolledCourses.includes(payingCourse.id)) {
+      enrolledCourses.push(payingCourse.id);
+      localStorage.setItem('enrolled', JSON.stringify(enrolledCourses));
+    }
+    document.getElementById('payForm').style.display = 'none';
+    document.getElementById('paySuccess').style.display = 'block';
+    renderHomeCourses();
+    renderSearchCourses(courses);
+    updateDashboard();
+    if (currentCourse) {
+      document.getElementById('enrollBtn').innerHTML = '<i class="fa fa-play"></i> Continue Learning';
+      buildExam(currentCourse, true);
+      document.getElementById('mCurriculum').innerHTML = currentCourse.curriculum.map((item, i) => `
+        <div class="curriculum-item">
+          <div class="curriculum-num">${i+1}</div>
+          <span>${item}</span>
+          <i class="fa fa-play" style="margin-left:auto;font-size:12px;color:var(--cyan);"></i>
+        </div>`).join('');
+    }
+  }, 2000);
+}
+
+function goToLearn() {
+  closePayModal();
+  if (currentCourse) {
+    showPage('home');
+  } else {
+    showPage('dashboard');
+  }
+  showToast('🎉 Welcome! You can now access your course.');
+  updateDashboard();
+}
+
+// ══════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════
+function updateDashboard() {
+  const enrolled = enrolledCourses.map(id => courses.find(c => c.id === id)).filter(Boolean);
+  const container = document.getElementById('dashboardContent');
+  if (enrolled.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:80px 20px;color:var(--text-muted);">
+      <i class="fa fa-graduation-cap" style="font-size:60px;color:var(--border);margin-bottom:20px;display:block;"></i>
+      <p style="font-size:18px;margin-bottom:20px;">You haven't enrolled in any courses yet.</p>
+      <button class="btn btn-primary" onclick="showPage('search')"><i class="fa fa-search"></i> Browse Courses</button></div>`;
+    return;
+  }
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;">
+      ${enrolled.map(c => `
+      <div class="course-card" style="cursor:pointer;" onclick="openCourseModal(courses.find(x=>x.id===${c.id}))">
+        <img class="course-thumb-img" src="${c.thumb}" alt="${c.title}" style="width:100%;aspect-ratio:16/9;object-fit:cover;" loading="lazy">
+        <div class="course-body">
+          <div class="course-cat">${c.category}</div>
+          <div class="course-title">${c.title}</div>
+          <div style="background:var(--dark);border-radius:50px;height:6px;margin:12px 0;overflow:hidden;">
+            <div style="height:100%;width:${Math.floor(Math.random()*60+20)}%;background:linear-gradient(90deg,var(--cyan),var(--pink));border-radius:50px;"></div>
+          </div>
+          <button class="btn-enroll" onclick="event.stopPropagation();openCourseModal(courses.find(x=>x.id===${c.id}))">
+            <i class="fa fa-play"></i> Continue Learning
+          </button>
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  const i = t.querySelector('i');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.borderColor = isError ? 'var(--pink)' : 'var(--cyan)';
+  i.style.color = isError ? 'var(--pink)' : 'var(--cyan)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ══════════════════════════════════════
+// HAMBURGER
+// ══════════════════════════════════════
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+</script>
+</body>
+</html>
