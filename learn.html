@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learners Grid</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3efe7;
+      --paper: #fffcf6;
+      --text: #1f1d1a;
+      --muted: #6d665d;
+      --line: #ddd3c5;
+      --brand: #0f766e;
+      --brand-2: #f59e0b;
+      --success: #166534;
+      --danger: #b42318;
+      --radius: 16px;
+      --shadow: 0 10px 25px rgba(32, 24, 12, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Manrope", sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, #fff6e8 0%, transparent 40%),
+        radial-gradient(circle at 90% 20%, #d8f4f1 0%, transparent 35%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: "Space Grotesk", sans-serif;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .container {
+      width: min(1120px, 92vw);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 252, 246, 0.85);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 72px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .brand {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--brand);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .search {
+      flex: 1;
+      min-width: 220px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 9px 14px;
+    }
+
+    .search input {
+      border: 0;
+      outline: none;
+      width: 100%;
+      font: inherit;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    button,
+    select {
+      font: inherit;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--text);
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    main {
+      padding: 24px 0 44px;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #fff6e8, #d8f4f1);
+      border: 1px solid #e5dccf;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 30px);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin: 10px 0 0;
+      max-width: 70ch;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .filters {
+      margin: 18px 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--text);
+      padding: 7px 12px;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: #d8f4f1;
+      border-color: #9fd8d3;
+      color: #0f5c55;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transform: translateY(0);
+      transition: transform .15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tag {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #efe6d9;
+      color: #5f4f39;
+      border: 1px solid #decfb9;
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #ece4d8;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      transition: width .2s ease;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .ghost {
+      background: transparent;
+    }
+
+    .status {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .empty {
+      border: 1px dashed #cfbfaa;
+      background: #fff8ee;
+      border-radius: var(--radius);
+      padding: 22px;
+      color: #7b6a55;
+      display: none;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp .5s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 800px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        width: 100%;
+        justify-content: flex-start;
+        margin-left: 0;
+      }
+
+      .topbar-wrap {
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-wrap">
+      <a class="brand" href="#">Learners Grid</a>
+      <label class="search" for="searchInput">
+        <span>Search</span>
+        <input id="searchInput" type="search" placeholder="Find a course, skill, or topic..." aria-label="Search learning items">
+      </label>
+      <div class="actions">
+        <select id="sortSelect" aria-label="Sort learning items">
+          <option value="progress-desc">Sort: Progress High-Low</option>
+          <option value="progress-asc">Sort: Progress Low-High</option>
+          <option value="title-asc">Sort: A-Z</option>
+        </select>
+        <button id="resetBtn" class="ghost" type="button">Reset</button>
+        <button id="addSampleBtn" class="primary" type="button">Add Sample</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero fade-up" style="animation-delay: .05s">
+      <div>
+        <h1>Track learning momentum with a smarter grid.</h1>
+        <p>
+          Filter by category, search quickly, and update progress as you study. Progress is saved in your browser so you can pick up where you left off.
+        </p>
+      </div>
+      <div class="stats">
+        <article class="stat">
+          <small>Total Items</small>
+          <strong id="totalItems">0</strong>
+        </article>
+        <article class="stat">
+          <small>Avg. Progress</small>
+          <strong id="avgProgress">0%</strong>
+        </article>
+        <article class="stat">
+          <small>Active Category</small>
+          <strong id="activeCategory">All</strong>
+        </article>
+        <article class="stat">
+          <small>Completed</small>
+          <strong id="completedCount">0</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="filters fade-up" style="animation-delay: .1s" id="filters"></section>
+
+    <section class="grid fade-up" style="animation-delay: .15s" id="cardGrid"></section>
+    <section class="empty" id="emptyState">No learning items match your current filters.</section>
+    <p class="status" id="statusText">Ready.</p>
+  </main>
+
+  <script>
+    const storageKey = "learners-grid-items-v1";
+
+    const baseItems = [
+      { id: crypto.randomUUID(), title: "HTML Foundations", category: "Frontend", progress: 78, lessons: 16, minutesPerDay: 30 },
+      { id: crypto.randomUUID(), title: "CSS Layout Mastery", category: "Frontend", progress: 52, lessons: 21, minutesPerDay: 25 },
+      { id: crypto.randomUUID(), title: "JavaScript Core", category: "Programming", progress: 35, lessons: 24, minutesPerDay: 40 },
+      { id: crypto.randomUUID(), title: "Git and Collaboration", category: "Tools", progress: 84, lessons: 10, minutesPerDay: 15 },
+      { id: crypto.randomUUID(), title: "API Design Basics", category: "Backend", progress: 20, lessons: 12, minutesPerDay: 35 },
+      { id: crypto.randomUUID(), title: "UI Writing", category: "Design", progress: 62, lessons: 8, minutesPerDay: 20 }
+    ];
+
+    const state = {
+      query: "",
+      category: "All",
+      sort: "progress-desc",
+      items: loadItems()
+    };
+
+    const refs = {
+      grid: document.getElementById("cardGrid"),
+      searchInput: document.getElementById("searchInput"),
+      filters: document.getElementById("filters"),
+      sortSelect: document.getElementById("sortSelect"),
+      emptyState: document.getElementById("emptyState"),
+      totalItems: document.getElementById("totalItems"),
+      avgProgress: document.getElementById("avgProgress"),
+      activeCategory: document.getElementById("activeCategory"),
+      completedCount: document.getElementById("completedCount"),
+      statusText: document.getElementById("statusText")
+    };
+
+    function loadItems() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (Array.isArray(saved) && saved.length > 0) return saved;
+      } catch (_) {}
+      return [...baseItems];
+    }
+
+    function saveItems() {
+      localStorage.setItem(storageKey, JSON.stringify(state.items));
+    }
+
+    function categories() {
+      const unique = new Set(state.items.map(item => item.category));
+      return ["All", ...[...unique].sort()];
+    }
+
+    function filteredItems() {
+      const q = state.query.trim().toLowerCase();
+      return state.items
+        .filter(item => {
+          const matchesCategory = state.category === "All" || item.category === state.category;
+          const matchesQuery = !q || [item.title, item.category].join(" ").toLowerCase().includes(q);
+          return matchesCategory && matchesQuery;
+        })
+        .sort((a, b) => {
+          if (state.sort === "progress-asc") return a.progress - b.progress;
+          if (state.sort === "title-asc") return a.title.localeCompare(b.title);
+          return b.progress - a.progress;
+        });
+    }
+
+    function updateStats(current) {
+      const total = state.items.length;
+      const completed = state.items.filter(item => item.progress >= 100).length;
+      const avg = total === 0 ? 0 : Math.round(state.items.reduce((sum, item) => sum + item.progress, 0) / total);
+
+      refs.totalItems.textContent = String(total);
+      refs.avgProgress.textContent = `${avg}%`;
+      refs.activeCategory.textContent = state.category;
+      refs.completedCount.textContent = String(completed);
+
+      refs.emptyState.style.display = current.length ? "none" : "block";
+      refs.statusText.textContent = `${current.length} visible item${current.length === 1 ? "" : "s"}.`;
+    }
+
+    function renderFilters() {
+      refs.filters.innerHTML = "";
+      categories().forEach((name) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `chip${name === state.category ? " active" : ""}`;
+        button.textContent = name;
+        button.addEventListener("click", () => {
+          state.category = name;
+          render();
+        });
+        refs.filters.appendChild(button);
+      });
+    }
+
+    function incrementProgress(itemId, amount) {
+      state.items = state.items.map(item => {
+        if (item.id !== itemId) return item;
+        return { ...item, progress: Math.max(0, Math.min(100, item.progress + amount)) };
+      });
+      saveItems();
+      render();
+    }
+
+    function createCard(item) {
+      const card = document.createElement("article");
+      card.className = "card";
+
+      card.innerHTML = `
+        <div class="card-head">
+          <div>
+            <h3>${item.title}</h3>
+            <p class="meta">${item.lessons} lessons • ${item.minutesPerDay} min/day</p>
+          </div>
+          <span class="tag">${item.category}</span>
+        </div>
+        <div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" style="width:${item.progress}%"></div>
+          </div>
+          <p class="meta">Progress: ${item.progress}%</p>
+        </div>
+        <div class="card-actions">
+          <button type="button" data-action="plus">+ 10%</button>
+          <button type="button" data-action="minus" class="ghost">- 10%</button>
+        </div>
+      `;
+
+      card.querySelector('[data-action="plus"]').addEventListener("click", () => incrementProgress(item.id, 10));
+      card.querySelector('[data-action="minus"]').addEventListener("click", () => incrementProgress(item.id, -10));
+      return card;
+    }
+
+    function render() {
+      renderFilters();
+      const current = filteredItems();
+      refs.grid.innerHTML = "";
+      current.forEach(item => refs.grid.appendChild(createCard(item)));
+      updateStats(current);
+    }
+
+    refs.searchInput.addEventListener("input", (event) => {
+      state.query = event.target.value;
+      render();
+    });
+
+    refs.sortSelect.addEventListener("change", (event) => {
+      state.sort = event.target.value;
+      render();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      state.items = [...baseItems];
+      state.query = "";
+      state.category = "All";
+      state.sort = "progress-desc";
+      refs.searchInput.value = "";
+      refs.sortSelect.value = state.sort;
+      saveItems();
+      render();
+    });
+
+    document.getElementById("addSampleBtn").addEventListener("click", () => {
+      const n = state.items.length + 1;
+      state.items.push({
+        id: crypto.randomUUID(),
+        title: `New Learning Path ${n}`,
+        category: "Custom",
+        progress: 0,
+        lessons: 12,
+        minutesPerDay: 20
+      });
+      saveItems();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
