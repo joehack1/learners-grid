@@ -2,537 +2,621 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learners Grid</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>CSS Playground · Live Coding & Compare Environment</title>
   <style>
-    :root {
-      --bg: #f3efe7;
-      --paper: #fffcf6;
-      --text: #1f1d1a;
-      --muted: #6d665d;
-      --line: #ddd3c5;
-      --brand: #0f766e;
-      --brand-2: #f59e0b;
-      --success: #166534;
-      --danger: #b42318;
-      --radius: 16px;
-      --shadow: 0 10px 25px rgba(32, 24, 12, 0.08);
-    }
-
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
 
-    html,
     body {
-      margin: 0;
-      padding: 0;
-      font-family: "Manrope", sans-serif;
-      background:
-        radial-gradient(circle at 15% 10%, #fff6e8 0%, transparent 40%),
-        radial-gradient(circle at 90% 20%, #d8f4f1 0%, transparent 35%),
-        var(--bg);
-      color: var(--text);
-    }
-
-    h1,
-    h2,
-    h3 {
-      font-family: "Space Grotesk", sans-serif;
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
-
-    .container {
-      width: min(1120px, 92vw);
-      margin: 0 auto;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(8px);
-      background: rgba(255, 252, 246, 0.85);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .topbar-wrap {
+      background: linear-gradient(145deg, #10131c 0%, #1a1f2c 100%);
+      font-family: 'Segoe UI', 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+      min-height: 100vh;
+      padding: 1.5rem;
       display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 14px;
-      min-height: 72px;
-      flex-wrap: wrap;
-      padding: 10px 0;
     }
 
-    .brand {
-      font-family: "Space Grotesk", sans-serif;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--brand);
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .search {
-      flex: 1;
-      min-width: 220px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid var(--line);
-      background: var(--paper);
-      border-radius: 999px;
-      padding: 9px 14px;
-    }
-
-    .search input {
-      border: 0;
-      outline: none;
+    /* main dashboard */
+    .env-container {
+      max-width: 1600px;
       width: 100%;
-      font: inherit;
-      background: transparent;
-      color: var(--text);
+      background: rgba(22, 26, 35, 0.7);
+      backdrop-filter: blur(2px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+      overflow: hidden;
+      padding: 1.2rem;
+      transition: all 0.2s;
     }
 
-    .actions {
+    /* header */
+    .toolbar {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: auto;
-    }
-
-    button,
-    select {
-      font: inherit;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--paper);
-      color: var(--text);
-      padding: 8px 14px;
-      cursor: pointer;
-    }
-
-    button.primary {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    main {
-      padding: 24px 0 44px;
-    }
-
-    .hero {
-      background: linear-gradient(120deg, #fff6e8, #d8f4f1);
-      border: 1px solid #e5dccf;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: clamp(18px, 3vw, 30px);
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .hero p {
-      color: var(--muted);
-      margin: 10px 0 0;
-      max-width: 70ch;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(120px, 1fr));
-      gap: 10px;
-    }
-
-    .stat {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 1.2rem;
-      font-family: "Space Grotesk", sans-serif;
-    }
-
-    .filters {
-      margin: 18px 0;
-      display: flex;
-      gap: 10px;
       flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+      padding: 0 0.5rem;
     }
-
-    .chip {
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--paper);
-      color: var(--text);
-      padding: 7px 12px;
-      cursor: pointer;
+    .title-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
     }
-
-    .chip.active {
-      background: #d8f4f1;
-      border-color: #9fd8d3;
-      color: #0f5c55;
+    .title-badge h1 {
+      font-size: 1.5rem;
       font-weight: 600;
+      background: linear-gradient(135deg, #E2E8F0, #94A3B8);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .badge {
+      background: #2d3748;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #b9c3d4;
+      font-family: monospace;
+    }
+    .action-group {
+      display: flex;
+      gap: 0.8rem;
+    }
+    button {
+      background: #1e293b;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      font-family: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+      color: #e2e8f0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    button i { font-style: normal; font-weight: 600; }
+    button:hover {
+      background: #2d3a4e;
+      transform: translateY(-1px);
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    .reset-btn {
+      background: #0f172a;
+      border: 1px solid #334155;
+    }
+    .compare-mode {
+      background: #2c3e4e;
+      border-left: 3px solid #5f9ea0;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
+    /* two column layout: editor + previews */
+    .split-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
     }
-
-    .card {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
+    /* CSS editor panel */
+    .editor-panel {
+      flex: 1.2;
+      min-width: 280px;
+      background: #0b0e14;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      transform: translateY(0);
-      transition: transform .15s ease;
     }
-
-    .card:hover {
-      transform: translateY(-3px);
-    }
-
-    .card-head {
+    .panel-header {
+      background: #141b24;
+      padding: 0.8rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      border-bottom: 1px solid #2d3748;
       display: flex;
-      align-items: start;
       justify-content: space-between;
-      gap: 8px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
-
-    .tag {
-      font-size: 0.78rem;
-      border-radius: 999px;
-      padding: 5px 9px;
-      background: #efe6d9;
-      color: #5f4f39;
-      border: 1px solid #decfb9;
-      white-space: nowrap;
+    .panel-header span:first-child {
+      color: #7dd3fc;
+      font-weight: 600;
     }
-
-    .progress-track {
+    .char-count {
+      font-size: 0.7rem;
+      background: #1e2a3a;
+      padding: 0.2rem 0.6rem;
+      border-radius: 30px;
+      color: #b9c7d9;
+    }
+    textarea {
       width: 100%;
-      height: 8px;
-      border-radius: 999px;
-      background: #ece4d8;
+      background: #010409;
+      color: #e2e8f0;
+      border: none;
+      padding: 1.2rem;
+      font-family: 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      tab-size: 2;
+      white-space: pre-wrap;
+      flex: 1;
+      min-height: 380px;
+    }
+    textarea:focus {
+      background: #050a14;
+      box-shadow: inset 0 0 0 2px #2c4c6e;
+    }
+
+    /* previews area */
+    .previews-panel {
+      flex: 2;
+      min-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .preview-card {
+      background: #0f121b;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+      transition: all 0.2s;
+    }
+    .preview-header {
+      background: #1a212c;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #2a3342;
+      font-family: monospace;
+    }
+    .preview-frame {
+      background: #ffffff;
+      padding: 1rem;
+      min-height: 320px;
+      transition: background 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* dynamic content inside iframe alternative? We use live sandbox div with shadow DOM? 
+       Simpler and robust: inline style applied to a sandbox container */
+    .sandbox {
+      width: 100%;
+      background: #fff;
+      border-radius: 0.8rem;
+      transition: all 0.2s;
+      overflow: auto;
+    }
+    /* compare specific */
+    .compare-dual {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .compare-item {
+      flex: 1;
+      background: #0f121b;
+      border-radius: 1rem;
       overflow: hidden;
     }
-
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--brand), var(--brand-2));
-      transition: width .2s ease;
+    .compare-label {
+      background: #10161f;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-align: center;
+      color: #cbd5e6;
+      border-bottom: 1px solid #2d3a48;
     }
-
-    .meta {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .card-actions {
+    .compare-preview {
+      background: white;
+      padding: 1rem;
+      min-height: 320px;
       display: flex;
-      gap: 8px;
-      margin-top: auto;
+      align-items: center;
+      justify-content: center;
     }
-
-    .ghost {
-      background: transparent;
+    .note {
+      font-size: 0.7rem;
+      color: #7e8aa2;
+      text-align: center;
+      margin-top: 1rem;
+      background: #0b0f18;
+      padding: 0.5rem;
+      border-radius: 1rem;
     }
-
-    .status {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.92rem;
+    @media (max-width: 760px) {
+      body { padding: 0.8rem; }
+      .compare-dual { flex-direction: column; }
+      .previews-panel { min-width: auto; }
     }
-
-    .empty {
-      border: 1px dashed #cfbfaa;
-      background: #fff8ee;
-      border-radius: var(--radius);
-      padding: 22px;
-      color: #7b6a55;
-      display: none;
-    }
-
-    .fade-up {
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeUp .5s ease forwards;
-    }
-
-    @keyframes fadeUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 800px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
-
-      .actions {
-        width: 100%;
-        justify-content: flex-start;
-        margin-left: 0;
-      }
-
-      .topbar-wrap {
-        align-items: stretch;
-      }
+    /* custom element style inside sandbox */
+    .demo-card {
+      font-family: system-ui, 'Segoe UI', sans-serif;
+      max-width: 280px;
+      margin: 0 auto;
+      padding: 1rem;
+      border-radius: 1rem;
+      transition: all 0.2s;
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="container topbar-wrap">
-      <a class="brand" href="#">Learners Grid</a>
-      <label class="search" for="searchInput">
-        <span>Search</span>
-        <input id="searchInput" type="search" placeholder="Find a course, skill, or topic..." aria-label="Search learning items">
-      </label>
-      <div class="actions">
-        <select id="sortSelect" aria-label="Sort learning items">
-          <option value="progress-desc">Sort: Progress High-Low</option>
-          <option value="progress-asc">Sort: Progress Low-High</option>
-          <option value="title-asc">Sort: A-Z</option>
-        </select>
-        <button id="resetBtn" class="ghost" type="button">Reset</button>
-        <button id="addSampleBtn" class="primary" type="button">Add Sample</button>
+<div class="env-container">
+  <div class="toolbar">
+    <div class="title-badge">
+      <h1>⚡ CSS Playground</h1>
+      <div class="badge">live compare</div>
+    </div>
+    <div class="action-group">
+      <button id="resetCssBtn" class="reset-btn">⟳ Reset CSS</button>
+      <button id="compareToggleBtn" class="compare-mode">🔄 Split Compare</button>
+    </div>
+  </div>
+
+  <div class="split-layout">
+    <!-- Left: Code Editor -->
+    <div class="editor-panel">
+      <div class="panel-header">
+        <span>🎨 Edit CSS · instant feedback</span>
+        <span class="char-count" id="charCounter">0 characters</span>
+      </div>
+      <textarea id="cssEditor" placeholder="/* write your magic CSS here */&#10;&#10;.demo-card {&#10;  background: linear-gradient(145deg, #f3f9ff, #e0eaff);&#10;  border-radius: 28px;&#10;  box-shadow: 0 12px 24px -8px rgba(0,0,0,0.2);&#10;  padding: 1.5rem;&#10;  transition: 0.2s;&#10;}&#10;&#10;.demo-card:hover {&#10;  transform: scale(1.02);&#10;  background: #fff0e0;&#10;}&#10;&#10;button.demo-btn {&#10;  background: #2c5f8a;&#10;  border: none;&#10;  color: white;&#10;  padding: 8px 16px;&#10;  border-radius: 40px;&#10;  font-weight: bold;&#10;  cursor: pointer;&#10;}&#10;&#10;h3 { color: #1e3c5c; }&#10;p { color: #2c3e50; }"></textarea>
+    </div>
+
+    <!-- Right: Preview + Compare container -->
+    <div class="previews-panel" id="previewArea">
+      <!-- Default single preview mode -->
+      <div id="singlePreviewMode" class="preview-card">
+        <div class="preview-header">
+          <span>✨ Live Preview (single view)</span>
+          <span>📐 responsive</span>
+        </div>
+        <div class="preview-frame" id="singleFrame">
+          <div class="sandbox" id="liveSandboxSingle">
+            <!-- dynamic html content will be injected -->
+          </div>
+        </div>
+      </div>
+      <!-- compare mode (hidden initially) -->
+      <div id="compareModeContainer" style="display: none;">
+        <div class="compare-dual">
+          <div class="compare-item">
+            <div class="compare-label">🎭 Preview A — current CSS</div>
+            <div class="compare-preview" id="compareA"></div>
+          </div>
+          <div class="compare-item">
+            <div class="compare-label">📋 Preview B — reference / baseline</div>
+            <div class="compare-preview" id="compareB"></div>
+          </div>
+        </div>
+        <div class="note">💡 Compare mode: Left side always reflects your live CSS edits. Right side shows initial default CSS (or last reset state). Great for A/B testing!</div>
       </div>
     </div>
-  </header>
+  </div>
+  <div class="note">
+    ⚡ Type or paste any CSS — both previews update instantly (compare mode: left updates live, right stays as baseline snapshot). Use <strong>Split Compare</strong> to see changes side-by-side.
+  </div>
+</div>
 
-  <main class="container">
-    <section class="hero fade-up" style="animation-delay: .05s">
-      <div>
-        <h1>Track learning momentum with a smarter grid.</h1>
-        <p>
-          Filter by category, search quickly, and update progress as you study. Progress is saved in your browser so you can pick up where you left off.
-        </p>
-      </div>
-      <div class="stats">
-        <article class="stat">
-          <small>Total Items</small>
-          <strong id="totalItems">0</strong>
-        </article>
-        <article class="stat">
-          <small>Avg. Progress</small>
-          <strong id="avgProgress">0%</strong>
-        </article>
-        <article class="stat">
-          <small>Active Category</small>
-          <strong id="activeCategory">All</strong>
-        </article>
-        <article class="stat">
-          <small>Completed</small>
-          <strong id="completedCount">0</strong>
-        </article>
-      </div>
-    </section>
+<script>
+  // ========================
+  // 1. Shared HTML structure & Demo elements
+  // ========================
+  const DEMO_HTML_CONTENT = `
+    <div class="demo-card" id="magicCard">
+      <h3>✨ Interactive Demo</h3>
+      <p>This box responds to your custom CSS. Try changing background, shadows, borders, animations...</p>
+      <button class="demo-btn" id="demoClickBtn">Click me →</button>
+      <div style="margin-top: 12px; font-size: 12px; opacity:0.7;">🎨 style everything</div>
+    </div>
+  `;
 
-    <section class="filters fade-up" style="animation-delay: .1s" id="filters"></section>
+  // Default starter CSS (beautiful base)
+  const DEFAULT_CSS = `/* Default theme — smooth & playful */
+.demo-card {
+  background: linear-gradient(135deg, #fef9e6, #f2e5d5);
+  border-radius: 32px;
+  padding: 1.8rem;
+  box-shadow: 0 20px 30px -12px rgba(0,0,0,0.2);
+  transition: all 0.25s ease;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  text-align: center;
+  border: 1px solid rgba(255,255,200,0.4);
+}
 
-    <section class="grid fade-up" style="animation-delay: .15s" id="cardGrid"></section>
-    <section class="empty" id="emptyState">No learning items match your current filters.</section>
-    <p class="status" id="statusText">Ready.</p>
-  </main>
+.demo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 28px 36px -14px rgba(0,0,0,0.3);
+  background: #fff6e8;
+}
 
-  <script>
-    const storageKey = "learners-grid-items-v1";
+h3 {
+  color: #aa6f3c;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
 
-    const baseItems = [
-      { id: crypto.randomUUID(), title: "HTML Foundations", category: "Frontend", progress: 78, lessons: 16, minutesPerDay: 30 },
-      { id: crypto.randomUUID(), title: "CSS Layout Mastery", category: "Frontend", progress: 52, lessons: 21, minutesPerDay: 25 },
-      { id: crypto.randomUUID(), title: "JavaScript Core", category: "Programming", progress: 35, lessons: 24, minutesPerDay: 40 },
-      { id: crypto.randomUUID(), title: "Git and Collaboration", category: "Tools", progress: 84, lessons: 10, minutesPerDay: 15 },
-      { id: crypto.randomUUID(), title: "API Design Basics", category: "Backend", progress: 20, lessons: 12, minutesPerDay: 35 },
-      { id: crypto.randomUUID(), title: "UI Writing", category: "Design", progress: 62, lessons: 8, minutesPerDay: 20 }
-    ];
+p {
+  color: #4a3b2c;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
 
-    const state = {
-      query: "",
-      category: "All",
-      sort: "progress-desc",
-      items: loadItems()
-    };
+.demo-btn {
+  background: #cb8b5e;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 60px;
+  color: white;
+  font-weight: bold;
+  margin-top: 0.8rem;
+  cursor: pointer;
+  transition: 0.15s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
 
-    const refs = {
-      grid: document.getElementById("cardGrid"),
-      searchInput: document.getElementById("searchInput"),
-      filters: document.getElementById("filters"),
-      sortSelect: document.getElementById("sortSelect"),
-      emptyState: document.getElementById("emptyState"),
-      totalItems: document.getElementById("totalItems"),
-      avgProgress: document.getElementById("avgProgress"),
-      activeCategory: document.getElementById("activeCategory"),
-      completedCount: document.getElementById("completedCount"),
-      statusText: document.getElementById("statusText")
-    };
+.demo-btn:hover {
+  background: #b46f42;
+  transform: scale(0.97);
+}
+`;
 
-    function loadItems() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(storageKey));
-        if (Array.isArray(saved) && saved.length > 0) return saved;
-      } catch (_) {}
-      return [...baseItems];
+  // DOM elements
+  const cssEditor = document.getElementById('cssEditor');
+  const charCounter = document.getElementById('charCounter');
+  const resetBtn = document.getElementById('resetCssBtn');
+  const compareToggleBtn = document.getElementById('compareToggleBtn');
+  const singlePreviewModeDiv = document.getElementById('singlePreviewMode');
+  const compareContainer = document.getElementById('compareModeContainer');
+  const singleFrame = document.getElementById('liveSandboxSingle');
+  const compareAPreview = document.getElementById('compareA');
+  const compareBPreview = document.getElementById('compareB');
+
+  // state
+  let currentCSS = DEFAULT_CSS;          // live editing css string
+  let baselineCSS = DEFAULT_CSS;          // snapshot for right side in compare mode
+  let isCompareMode = false;              // flag
+
+  // Helper: apply CSS to a specific sandbox container (with unique style id)
+  // Each sandbox gets its own <style> tag to avoid conflicts.
+  function applyCSSToContainer(containerElement, cssContent, clearExisting = true) {
+    if (!containerElement) return;
+    // Remove any previous style injected by us (data-css-env)
+    const oldStyle = containerElement.querySelector('style[data-css-env]');
+    if (oldStyle) oldStyle.remove();
+    
+    // Create new style element
+    const styleTag = document.createElement('style');
+    styleTag.setAttribute('data-css-env', 'dynamic');
+    styleTag.textContent = cssContent;
+    containerElement.appendChild(styleTag);
+  }
+
+  // Fully render demo HTML + current CSS into a target container
+  function renderSandbox(container, cssString, htmlContent = DEMO_HTML_CONTENT) {
+    if (!container) return;
+    // Clear container but keep style management clean
+    // We'll preserve the html content and then re-apply CSS
+    // first: store current inner html excluding style tags? simpler: rewrite HTML.
+    // but we need to preserve button event listeners? we'll re-attach after each render.
+    // Since we are only updating styles and occasionally HTML, we will set innerHTML and then attach events.
+    // But we also need to keep the style tag from previous? we remove old style after innerHTML.
+    // Better: set HTML, then apply CSS.
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    const newContent = tempDiv.children;
+    // clear container
+    while (container.firstChild) container.removeChild(container.firstChild);
+    // clone nodes
+    for (let i = 0; i < newContent.length; i++) {
+      container.appendChild(newContent[i].cloneNode(true));
     }
+    // now apply CSS
+    applyCSSToContainer(container, cssString);
+    // reattach event listeners for demo button (for UX)
+    attachButtonListener(container);
+  }
 
-    function saveItems() {
-      localStorage.setItem(storageKey, JSON.stringify(state.items));
-    }
-
-    function categories() {
-      const unique = new Set(state.items.map(item => item.category));
-      return ["All", ...[...unique].sort()];
-    }
-
-    function filteredItems() {
-      const q = state.query.trim().toLowerCase();
-      return state.items
-        .filter(item => {
-          const matchesCategory = state.category === "All" || item.category === state.category;
-          const matchesQuery = !q || [item.title, item.category].join(" ").toLowerCase().includes(q);
-          return matchesCategory && matchesQuery;
-        })
-        .sort((a, b) => {
-          if (state.sort === "progress-asc") return a.progress - b.progress;
-          if (state.sort === "title-asc") return a.title.localeCompare(b.title);
-          return b.progress - a.progress;
-        });
-    }
-
-    function updateStats(current) {
-      const total = state.items.length;
-      const completed = state.items.filter(item => item.progress >= 100).length;
-      const avg = total === 0 ? 0 : Math.round(state.items.reduce((sum, item) => sum + item.progress, 0) / total);
-
-      refs.totalItems.textContent = String(total);
-      refs.avgProgress.textContent = `${avg}%`;
-      refs.activeCategory.textContent = state.category;
-      refs.completedCount.textContent = String(completed);
-
-      refs.emptyState.style.display = current.length ? "none" : "block";
-      refs.statusText.textContent = `${current.length} visible item${current.length === 1 ? "" : "s"}.`;
-    }
-
-    function renderFilters() {
-      refs.filters.innerHTML = "";
-      categories().forEach((name) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = `chip${name === state.category ? " active" : ""}`;
-        button.textContent = name;
-        button.addEventListener("click", () => {
-          state.category = name;
-          render();
-        });
-        refs.filters.appendChild(button);
+  function attachButtonListener(container) {
+    // try to find the .demo-btn inside container
+    const btn = container.querySelector('.demo-btn');
+    if (btn && !btn.hasListener) {
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      newBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('🎉 CSS is alive! You can fully customize this button style.');
       });
+      newBtn.hasListener = true;
+    } else if (btn && !btn._listenerAttached) {
+      btn.addEventListener('click', () => alert('🎉 CSS is alive! You can fully customize this button style.'));
+      btn._listenerAttached = true;
     }
+  }
 
-    function incrementProgress(itemId, amount) {
-      state.items = state.items.map(item => {
-        if (item.id !== itemId) return item;
-        return { ...item, progress: Math.max(0, Math.min(100, item.progress + amount)) };
+  // update the whole UI depending on mode
+  function fullUIUpdate() {
+    // update char counter
+    charCounter.innerText = currentCSS.length + ' characters';
+    
+    if (!isCompareMode) {
+      // Single mode: show preview-card with live sandbox
+      singlePreviewModeDiv.style.display = 'block';
+      compareContainer.style.display = 'none';
+      // render single sandbox with current CSS
+      renderSandbox(singleFrame, currentCSS, DEMO_HTML_CONTENT);
+    } else {
+      // Compare mode: left = currentCSS (live), right = baselineCSS (snapshot)
+      singlePreviewModeDiv.style.display = 'none';
+      compareContainer.style.display = 'block';
+      // Render left (compareA) with currentCSS
+      renderSandbox(compareAPreview, currentCSS, DEMO_HTML_CONTENT);
+      // Render right (compareB) with baselineCSS
+      renderSandbox(compareBPreview, baselineCSS, DEMO_HTML_CONTENT);
+    }
+  }
+
+  // update only when user types: reflect live changes based on mode.
+  function handleCSSEdit(newCSS) {
+    currentCSS = newCSS;
+    fullUIUpdate();
+  }
+
+  // reset CSS to default (also updates baseline if needed)
+  function resetToDefault() {
+    currentCSS = DEFAULT_CSS;
+    // if we are in compare mode, we might also want to reset baseline to DEFAULT? 
+    // Typically reset should also reset the "reference" snapshot for consistency.
+    baselineCSS = DEFAULT_CSS;
+    cssEditor.value = DEFAULT_CSS;
+    fullUIUpdate();
+  }
+
+  // toggle compare mode:
+  // When entering compare mode: we set baselineCSS as snapshot of currentCSS (or existing baseline)
+  // When exiting compare mode: we just show single view, no data loss
+  function toggleCompareMode() {
+    isCompareMode = !isCompareMode;
+    if (isCompareMode) {
+      // entering compare: set baseline as current live CSS (so initially both sides equal)
+      baselineCSS = currentCSS;
+      compareToggleBtn.innerHTML = '🎛️ Exit Compare';
+      compareToggleBtn.style.background = '#3b4e62';
+    } else {
+      compareToggleBtn.innerHTML = '🔄 Split Compare';
+      compareToggleBtn.style.background = '#2c3e4e';
+    }
+    fullUIUpdate();
+  }
+
+  // Sync editor textarea with currentCSS (for reset, etc.)
+  function syncEditor() {
+    if (cssEditor.value !== currentCSS) {
+      cssEditor.value = currentCSS;
+    }
+  }
+
+  // event: editor input
+  cssEditor.addEventListener('input', (e) => {
+    const newVal = e.target.value;
+    currentCSS = newVal;
+    handleCSSEdit(currentCSS);
+  });
+
+  // reset button
+  resetBtn.addEventListener('click', () => {
+    resetToDefault();
+    syncEditor();
+  });
+
+  // compare toggle
+  compareToggleBtn.addEventListener('click', () => {
+    toggleCompareMode();
+    syncEditor(); // ensure editor shows correct currentCSS
+  });
+
+  // optional: if user wants to update baseline while in compare mode? we could add but fine.
+  // maybe provide a 'sync baseline to left' button? extra UX improvement: but not mandatory
+  // However we add a hidden feature: double click compare header to set baseline from left? 
+  // But keep minimal, but it's great. Actually we can add a small note and a quick action: Right click on Compare label? 
+  // Instead add a subtle button inside compare container? But not needed for core. But i'll add a convenient "📸 Set baseline to current" button when compare mode active.
+  // Enhance: provide a small icon inside compare container to copy left -> baseline.
+  function addBaselineSyncFeature() {
+    // create a tiny sync button inside compare header
+    const compareHeader = document.querySelector('#compareModeContainer .compare-dual');
+    if (compareHeader && !document.getElementById('syncBaselineBtn')) {
+      const syncWrap = document.createElement('div');
+      syncWrap.style.display = 'flex';
+      syncWrap.style.justifyContent = 'center';
+      syncWrap.style.marginTop = '0.5rem';
+      syncWrap.style.marginBottom = '0.2rem';
+      const syncBtn = document.createElement('button');
+      syncBtn.id = 'syncBaselineBtn';
+      syncBtn.innerText = '📸 Copy Left Style → Right Baseline';
+      syncBtn.style.background = '#2a3a48';
+      syncBtn.style.padding = '0.3rem 0.8rem';
+      syncBtn.style.fontSize = '0.7rem';
+      syncBtn.style.borderRadius = '2rem';
+      syncBtn.style.border = 'none';
+      syncBtn.style.cursor = 'pointer';
+      syncBtn.style.color = '#e0f2fe';
+      syncBtn.addEventListener('click', () => {
+        if (isCompareMode) {
+          baselineCSS = currentCSS;
+          fullUIUpdate();
+          // optional micro feedback
+          syncBtn.innerText = '✓ Synced!';
+          setTimeout(() => { if(syncBtn) syncBtn.innerText = '📸 Copy Left Style → Right Baseline'; }, 1200);
+        } else {
+          alert('Switch to compare mode first');
+        }
       });
-      saveItems();
-      render();
+      syncWrap.appendChild(syncBtn);
+      const containerRef = document.querySelector('#compareModeContainer .compare-dual');
+      if(containerRef && containerRef.parentNode) {
+        containerRef.parentNode.insertBefore(syncWrap, containerRef.nextSibling);
+      }
     }
+  }
 
-    function createCard(item) {
-      const card = document.createElement("article");
-      card.className = "card";
-
-      card.innerHTML = `
-        <div class="card-head">
-          <div>
-            <h3>${item.title}</h3>
-            <p class="meta">${item.lessons} lessons � ${item.minutesPerDay} min/day</p>
-          </div>
-          <span class="tag">${item.category}</span>
-        </div>
-        <div>
-          <div class="progress-track" aria-hidden="true">
-            <div class="progress-fill" style="width:${item.progress}%"></div>
-          </div>
-          <p class="meta">Progress: ${item.progress}%</p>
-        </div>
-        <div class="card-actions">
-          <button type="button" data-action="plus">+ 10%</button>
-          <button type="button" data-action="minus" class="ghost">- 10%</button>
-        </div>
-      `;
-
-      card.querySelector('[data-action="plus"]').addEventListener("click", () => incrementProgress(item.id, 10));
-      card.querySelector('[data-action="minus"]').addEventListener("click", () => incrementProgress(item.id, -10));
-      return card;
+  // Initialize environment
+  function init() {
+    cssEditor.value = DEFAULT_CSS;
+    currentCSS = DEFAULT_CSS;
+    baselineCSS = DEFAULT_CSS;
+    isCompareMode = false;
+    singlePreviewModeDiv.style.display = 'block';
+    compareContainer.style.display = 'none';
+    fullUIUpdate();
+    addBaselineSyncFeature();
+    // attach initial demo button listener after first render
+    setTimeout(() => {
+      const containerSingle = singleFrame;
+      if(containerSingle) attachButtonListener(containerSingle);
+    }, 30);
+  }
+  
+  // override fullUIUpdate to also attach listeners after each render
+  const originalFull = fullUIUpdate;
+  window.fullUIUpdate = fullUIUpdate;
+  fullUIUpdate = function() {
+    originalFull();
+    // attach event to buttons after rendering
+    if (!isCompareMode) {
+      setTimeout(() => attachButtonListener(singleFrame), 10);
+    } else {
+      setTimeout(() => {
+        attachButtonListener(compareAPreview);
+        attachButtonListener(compareBPreview);
+      }, 10);
     }
-
-    function render() {
-      renderFilters();
-      const current = filteredItems();
-      refs.grid.innerHTML = "";
-      current.forEach(item => refs.grid.appendChild(createCard(item)));
-      updateStats(current);
-    }
-
-    refs.searchInput.addEventListener("input", (event) => {
-      state.query = event.target.value;
-      render();
-    });
-
-    refs.sortSelect.addEventListener("change", (event) => {
-      state.sort = event.target.value;
-      render();
-    });
-
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      state.items = [...baseItems];
-      state.query = "";
-      state.category = "All";
-      state.sort = "progress-desc";
-      refs.searchInput.value = "";
-      refs.sortSelect.value = state.sort;
-      saveItems();
-      render();
-    });
-
-    document.getElementById("addSampleBtn").addEventListener("click", () => {
-      const n = state.items.length + 1;
-      state.items.push({
-        id: crypto.randomUUID(),
-        title: `New Learning Path ${n}`,
-        category: "Custom",
-        progress: 0,
-        lessons: 12,
-        minutesPerDay: 20
-      });
-      saveItems();
-      render();
-    });
-
-    render();
-  </script>
+  }.bind(this);
+  
+  init();
+  // final extra: re-trigger on window resize, but not needed. Good.
+</script>
 </body>
 </html>
