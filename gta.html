@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -132,7 +132,7 @@
 
 <div id="title-screen">
   <h1>STREET KINGS</h1>
-  <p>Open World — Drive. Fight. Survive.</p>
+  <p>Open World - Drive. Fight. Survive.</p>
   <div style="color:#666; font-size:13px; text-align:center; max-width:400px; line-height:1.8">
     WASD / Arrow Keys: Drive &nbsp;|&nbsp; Mouse: Look<br>
     Left Click: Shoot &nbsp;|&nbsp; E: Enter/Exit Car<br>
@@ -148,14 +148,14 @@
   <div id="money">$0</div>
   <div id="fps"></div>
   <div id="wanted-stars">
-    <span class="star" id="s1">★</span>
-    <span class="star" id="s2">★</span>
-    <span class="star" id="s3">★</span>
-    <span class="star" id="s4">★</span>
-    <span class="star" id="s5">★</span>
+    <span class="star" id="s1">&#9733;</span>
+    <span class="star" id="s2">&#9733;</span>
+    <span class="star" id="s3">&#9733;</span>
+    <span class="star" id="s4">&#9733;</span>
+    <span class="star" id="s5">&#9733;</span>
   </div>
-  <div id="armor-bar">🛡 ARMOR<div id="armor-fill" style="width:100%;"></div></div>
-  <div id="health-bar">❤ HEALTH<div id="health-fill" style="width:100%;"></div></div>
+  <div id="armor-bar">ARMOR<div id="armor-fill" style="width:100%;"></div></div>
+  <div id="health-bar">HEALTH<div id="health-fill" style="width:100%;"></div></div>
   <div id="weapon-display">
     <div id="weapon-name">PISTOL</div>
     <div id="ammo">30 / 90</div>
@@ -166,7 +166,7 @@
   </div>
   <div id="minimap"><canvas id="minimap-canvas" width="150" height="150"></canvas></div>
   <div id="controls-hint">
-    WASD / ↑↓←→ : Move/Drive<br>
+    WASD / Arrow Keys : Move/Drive<br>
     E : Enter/Exit Vehicle<br>
     LClick : Shoot &nbsp; R : Reload<br>
     1/2/3 : Weapons &nbsp; Shift : Sprint<br>
@@ -186,7 +186,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ============================================================
-// STREET KINGS — Full GTA-style Open World Game
+// STREET KINGS â€” Full GTA-style Open World Game
 // Three.js r128
 // ============================================================
 
@@ -194,7 +194,7 @@ let scene, camera, renderer, clock;
 let player, playerBody, playerVelocity = new THREE.Vector3();
 let isInVehicle = false, currentVehicle = null;
 let health = 100, armor = 100, money = 0, wantedLevel = 0;
-let currentWeapon = 0, ammo = [30, 20, 5], maxAmmo = [90, 60, 20];
+let currentWeapon = 0, ammo = [30, 20, 5], reserveAmmo = [90, 60, 20];
 let isReloading = false, reloadTimer = 0;
 let shootCooldown = 0, lastShot = 0;
 let gameRunning = false;
@@ -205,6 +205,7 @@ const WEAPONS = [
   { name: 'SMG', damage: 15, rate: 100, reload: 2000, color: 0x888888 },
   { name: 'SHOTGUN', damage: 80, rate: 900, reload: 2500, color: 0x996633 }
 ];
+const CLIP_SIZE = [30, 20, 5];
 
 // Input
 const keys = {};
@@ -625,7 +626,8 @@ function createNPCs() {
       direction: new THREE.Vector3(Math.random() - 0.5, 0, Math.random() - 0.5).normalize(),
       changeTimer: Math.random() * 3,
       fleeing: false, fleeTimer: 0,
-      dead: false, money: 10 + Math.floor(Math.random() * 50)
+      dead: false, money: 10 + Math.floor(Math.random() * 50),
+      hitCooldown: 0
     });
   }
 }
@@ -743,7 +745,7 @@ function enterNearestVehicle() {
     isInVehicle = true;
     currentVehicle = nearest;
     player.visible = false;
-    showMessage('🚗 DRIVING');
+    showMessage('ðŸš— DRIVING');
     showNotification('Press E to exit vehicle');
   }
 }
@@ -754,10 +756,11 @@ function exitVehicle() {
   player.position.x += 3;
   player.visible = true;
   currentVehicle = null;
-  showMessage('🚶 ON FOOT');
+  showMessage('ðŸš¶ ON FOOT');
 }
 
 function switchWeapon(idx) {
+  if (idx < 0 || idx >= WEAPONS.length) return;
   currentWeapon = idx;
   updateWeaponHUD();
   showNotification('Weapon: ' + WEAPONS[idx].name);
@@ -765,6 +768,14 @@ function switchWeapon(idx) {
 
 function startReload() {
   if (isReloading) return;
+  if (ammo[currentWeapon] >= CLIP_SIZE[currentWeapon]) {
+    showNotification('Magazine full');
+    return;
+  }
+  if (reserveAmmo[currentWeapon] <= 0) {
+    showNotification('No reserve ammo');
+    return;
+  }
   isReloading = true;
   reloadTimer = WEAPONS[currentWeapon].reload;
   showNotification('Reloading...');
@@ -776,7 +787,11 @@ function startReload() {
 function shootBullet() {
   const now = Date.now();
   if (now - lastShot < WEAPONS[currentWeapon].rate) return;
-  if (ammo[currentWeapon] <= 0) { showNotification('Out of ammo!'); return; }
+  if (ammo[currentWeapon] <= 0) {
+    if (!isReloading && reserveAmmo[currentWeapon] > 0) startReload();
+    else showNotification('Out of ammo!');
+    return;
+  }
 
   lastShot = now;
   ammo[currentWeapon]--;
@@ -954,10 +969,11 @@ function updateVehicle(dt) {
   npcs.forEach(npc => {
     if (npc.dead) return;
     const d = v.mesh.position.distanceTo(npc.mesh.position);
-    if (d < 2 && spd > 0.2) {
+    if (d < 2 && spd > 0.2 && npc.hitCooldown <= 0) {
       hitNPC(npc, spd * 50);
       addMoney(20);
       increaseWanted(1);
+      npc.hitCooldown = 0.6;
     }
   });
 }
@@ -965,6 +981,7 @@ function updateVehicle(dt) {
 function updateNPCs(dt) {
   npcs.forEach(npc => {
     if (npc.dead) return;
+    npc.hitCooldown = Math.max(0, npc.hitCooldown - dt);
 
     npc.changeTimer -= dt;
     if (npc.changeTimer <= 0) {
@@ -1053,6 +1070,11 @@ function fireCopBullet(pos, dir) {
   bullets.push({ mesh, velocity: dir.clone().multiplyScalar(2.5), life: 2, damage: 10, isCop: true });
 }
 
+function removeBullet(index) {
+  scene.remove(bullets[index].mesh);
+  bullets.splice(index, 1);
+}
+
 function updateBullets(dt) {
   for (let i = bullets.length - 1; i >= 0; i--) {
     const b = bullets[i];
@@ -1061,40 +1083,47 @@ function updateBullets(dt) {
     b.mesh.position.y = Math.max(0.1, b.mesh.position.y + b.velocity.y * dt * 60);
 
     if (b.life <= 0) {
-      scene.remove(b.mesh);
-      bullets.splice(i, 1);
+      removeBullet(i);
       continue;
     }
 
     // Hit NPCs (player bullets)
     if (!b.isCop) {
+      let hitTarget = false;
       for (let j = npcs.length - 1; j >= 0; j--) {
         const npc = npcs[j];
         if (npc.dead) continue;
         if (b.mesh.position.distanceTo(npc.mesh.position) < 0.7) {
           hitNPC(npc, b.damage);
           spawnBloodParticles(b.mesh.position.clone());
-          scene.remove(b.mesh);
-          bullets.splice(i, 1);
+          removeBullet(i);
           increaseWanted(1);
+          hitTarget = true;
           break;
         }
       }
+      if (hitTarget) continue;
+
       // Hit cops
-      cops.forEach((cop, ci) => {
+      for (let ci = cops.length - 1; ci >= 0; ci--) {
+        const cop = cops[ci];
         if (b.mesh.position.distanceTo(cop.mesh.position) < 2) {
           cop.health -= b.damage;
           spawnBloodParticles(b.mesh.position.clone());
           spawnParticles(b.mesh.position.clone(), 0xffff00, 3, 1);
           increaseWanted(2);
+          removeBullet(i);
           if (cop.health <= 0) {
             scene.remove(cop.mesh);
             cops.splice(ci, 1);
             addMoney(100);
-            showMessage('💰 COP DOWN +$100');
+            showMessage('COP DOWN +$100');
           }
+          hitTarget = true;
+          break;
         }
-      });
+      }
+      if (hitTarget) continue;
     }
 
     // Cop bullets hit player
@@ -1107,17 +1136,19 @@ function updateBullets(dt) {
           takeDamage(b.damage);
         }
         spawnParticles(b.mesh.position.clone(), 0xff4444, 4, 0.8);
-        scene.remove(b.mesh);
-        bullets.splice(i, 1);
+        removeBullet(i);
+        continue;
       }
     }
 
     // Hit vehicles
-    vehicles.forEach(v => {
-      if (v === currentVehicle && b.isCop) return;
+    for (let vi = vehicles.length - 1; vi >= 0; vi--) {
+      const v = vehicles[vi];
+      if (v === currentVehicle && b.isCop) continue;
       if (b.mesh.position.distanceTo(v.mesh.position) < 2.5) {
         v.health -= b.damage;
         spawnParticles(b.mesh.position.clone(), 0xff8800, 3, 1);
+        removeBullet(i);
         if (v.health <= 0) {
           spawnExplosion(v.mesh.position.clone());
           if (v === currentVehicle) {
@@ -1125,11 +1156,11 @@ function updateBullets(dt) {
             takeDamage(30);
           }
           scene.remove(v.mesh);
-          const idx = vehicles.indexOf(v);
-          if (idx > -1) vehicles.splice(idx, 1);
+          vehicles.splice(vi, 1);
         }
+        break;
       }
-    });
+    }
   }
 }
 
@@ -1137,8 +1168,8 @@ function updateParticles(dt) {
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
     p.life -= dt;
-    p.mesh.position.add(p.velocity.clone().multiplyScalar(dt * 60 * 0.016));
-    p.velocity.y -= 0.1 * dt * 60 * 0.016;
+    p.mesh.position.add(p.velocity.clone().multiplyScalar(dt * 60));
+    p.velocity.y -= 0.1 * dt * 60;
     p.mesh.material.opacity = p.life / p.maxLife;
     p.mesh.material.transparent = true;
     if (p.life <= 0) {
@@ -1149,6 +1180,7 @@ function updateParticles(dt) {
 }
 
 function hitNPC(npc, dmg) {
+  if (npc.dead) return;
   npc.health -= dmg;
   spawnBloodParticles(npc.mesh.position.clone().add(new THREE.Vector3(0, 1, 0)));
   if (npc.health <= 0) {
@@ -1156,7 +1188,7 @@ function hitNPC(npc, dmg) {
     npc.mesh.rotation.z = Math.PI / 2;
     npc.mesh.position.y = -0.3;
     addMoney(npc.money);
-    showMessage('💀 +$' + npc.money);
+    showMessage('ðŸ’€ +$' + npc.money);
   }
 }
 
@@ -1212,7 +1244,7 @@ function spawnCop() {
   const cx = player.position.x + Math.cos(angle) * dist;
   const cz = player.position.z + Math.sin(angle) * dist;
   createCopCar(cx, cz);
-  showNotification('⚠️ POLICE INCOMING!');
+  showNotification('âš ï¸ POLICE INCOMING!');
 }
 
 function updateWanted(dt) {
@@ -1226,7 +1258,7 @@ function updateWanted(dt) {
       if (wantedLevel === 0) {
         cops.forEach(c => scene.remove(c.mesh));
         cops.length = 0;
-        showNotification('✅ Evaded Police');
+        showNotification('âœ… Evaded Police');
       }
     }
   } else {
@@ -1264,7 +1296,7 @@ function updateWantedHUD() {
 
 function updateWeaponHUD() {
   document.getElementById('weapon-name').textContent = WEAPONS[currentWeapon].name;
-  document.getElementById('ammo').textContent = ammo[currentWeapon] + ' / ' + maxAmmo[currentWeapon];
+  document.getElementById('ammo').textContent = ammo[currentWeapon] + ' / ' + reserveAmmo[currentWeapon];
 }
 
 function addMoney(amount) {
@@ -1397,15 +1429,21 @@ function restartGame() {
   cops.length = 0;
 
   health = 100; armor = 100; money = 0; wantedLevel = 0;
-  ammo = [30, 20, 5]; isInVehicle = false; currentVehicle = null;
+  ammo = [30, 20, 5];
+  reserveAmmo = [90, 60, 20];
+  isInVehicle = false;
+  currentVehicle = null;
   playerYaw = 0; playerPitch = 0;
   isReloading = false;
+  wantedTimer = 0;
+  wantedCooldown = 0;
 
   initWorld();
   updateHealthHUD();
   updateWantedHUD();
   updateWeaponHUD();
   document.getElementById('money').textContent = '$0';
+  document.getElementById('speed-val').textContent = '0 MPH';
   gameRunning = true;
   document.getElementById('canvas').requestPointerLock();
 }
@@ -1490,13 +1528,13 @@ function gameLoop() {
   if (isReloading) {
     reloadTimer -= dt * 1000;
     if (reloadTimer <= 0) {
-      const refill = Math.min(maxAmmo[currentWeapon] - ammo[currentWeapon],
-        maxAmmo[currentWeapon]);
+      const needed = Math.max(0, CLIP_SIZE[currentWeapon] - ammo[currentWeapon]);
+      const refill = Math.min(needed, reserveAmmo[currentWeapon]);
       ammo[currentWeapon] += refill;
-      maxAmmo[currentWeapon] -= refill;
+      reserveAmmo[currentWeapon] -= refill;
       isReloading = false;
       updateWeaponHUD();
-      showNotification('Reloaded!');
+      showNotification(refill > 0 ? 'Reloaded!' : 'No reserve ammo');
     }
   }
 
@@ -1525,7 +1563,7 @@ gameLoop();
 
 // Welcome message
 setTimeout(() => {
-  if (gameRunning) showMessage('🎮 STREET KINGS', 3000);
+  if (gameRunning) showMessage('ðŸŽ® STREET KINGS', 3000);
 }, 500);
 </script>
 </body>
