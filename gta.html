@@ -745,7 +745,7 @@ function enterNearestVehicle() {
     isInVehicle = true;
     currentVehicle = nearest;
     player.visible = false;
-    showMessage('ðŸš— DRIVING');
+    showMessage('DRIVING');
     showNotification('Press E to exit vehicle');
   }
 }
@@ -756,7 +756,7 @@ function exitVehicle() {
   player.position.x += 3;
   player.visible = true;
   currentVehicle = null;
-  showMessage('ðŸš¶ ON FOOT');
+  showMessage('ON FOOT');
 }
 
 function switchWeapon(idx) {
@@ -1188,7 +1188,7 @@ function hitNPC(npc, dmg) {
     npc.mesh.rotation.z = Math.PI / 2;
     npc.mesh.position.y = -0.3;
     addMoney(npc.money);
-    showMessage('ðŸ’€ +$' + npc.money);
+    showMessage('TARGET DOWN +$' + npc.money);
   }
 }
 
@@ -1244,7 +1244,7 @@ function spawnCop() {
   const cx = player.position.x + Math.cos(angle) * dist;
   const cz = player.position.z + Math.sin(angle) * dist;
   createCopCar(cx, cz);
-  showNotification('âš ï¸ POLICE INCOMING!');
+  showNotification('POLICE INCOMING!');
 }
 
 function updateWanted(dt) {
@@ -1258,7 +1258,7 @@ function updateWanted(dt) {
       if (wantedLevel === 0) {
         cops.forEach(c => scene.remove(c.mesh));
         cops.length = 0;
-        showNotification('âœ… Evaded Police');
+        showNotification('Evaded police');
       }
     }
   } else {
@@ -1563,8 +1563,9 @@ gameLoop();
 
 // Welcome message
 setTimeout(() => {
-  if (gameRunning) showMessage('ðŸŽ® STREET KINGS', 3000);
+  if (gameRunning) showMessage('STREET KINGS', 3000);
 }, 500);
 </script>
 </body>
 </html>
+
