@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Realistic Cartoon Characters - Family Guy Style | Three.js</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Poppins', 'Segoe UI', 'Arial', sans-serif;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            color: white;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-left: 4px solid #ffcc00;
+        }
+        #controls-note {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            color: rgba(255,255,255,0.7);
+            background: rgba(0,0,0,0.5);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-family: monospace;
+            pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            #info { font-size: 10px; top: 10px; left: 10px; }
+            #controls-note { font-size: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        🎭 FAMILY GUY STYLE • REALISTIC 3D CARTOON MODELS
+    </div>
+    <div id="controls-note">
+        🖱️ Drag to rotate | Right-click pan | Scroll zoom
+    </div>
+
+    <!-- Import Three.js core and add-ons from CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- Setup Scene, Cameras, Renderers ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x071a3b); // deep night blue
+        scene.fog = new THREE.FogExp2(0x071a3b, 0.008); // subtle fog for depth
+
+        // Perspective Camera
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(5, 3, 8);
+        camera.lookAt(0, 1.5, 0);
+
+        // WebGL Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true; // enable shadows for realism
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // CSS2DRenderer for text labels
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+
+        // --- Controls ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.enableZoom = true;
+        controls.enablePan = true;
+        controls.target.set(0, 1.8, 0);
+
+        // --- Lighting Setup (Realistic & Dramatic) ---
+        
+        // Ambient light - soft fill
+        const ambientLight = new THREE.AmbientLight(0x404060, 0.65);
+        scene.add(ambientLight);
+        
+        // Main directional light (sun)
+        const mainLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
+        mainLight.position.set(4, 8, 3);
+        mainLight.castShadow = true;
+        mainLight.receiveShadow = false;
+        mainLight.shadow.mapSize.width = 1024;
+        mainLight.shadow.mapSize.height = 1024;
+        mainLight.shadow.camera.near = 0.5;
+        mainLight.shadow.camera.far = 12;
+        mainLight.shadow.camera.left = -5;
+        mainLight.shadow.camera.right = 5;
+        mainLight.shadow.camera.top = 5;
+        mainLight.shadow.camera.bottom = -5;
+        scene.add(mainLight);
+        
+        // Fill light from below and warm rim
+        const fillLight = new THREE.PointLight(0xccaa77, 0.45);
+        fillLight.position.set(0, -1, 1);
+        scene.add(fillLight);
+        
+        // Cool rim light from back
+        const rimLight = new THREE.PointLight(0x88aaff, 0.6);
+        rimLight.position.set(-2, 3, -4);
+        scene.add(rimLight);
+        
+        // Warm back rim
+        const warmRim = new THREE.PointLight(0xffaa66, 0.5);
+        warmRim.position.set(3, 2.5, -3.5);
+        scene.add(warmRim);
+        
+        // Fill spots for character faces
+        const faceFill = new THREE.PointLight(0xffcc99, 0.4);
+        faceFill.position.set(0, 2, 2.5);
+        scene.add(faceFill);
+        
+        // Optional: subtle ground plane reflection (invisible but helps shadows)
+        const groundHelper = new THREE.GridHelper(12, 20, 0x88aaff, 0x335588);
+        groundHelper.position.y = -0.8;
+        groundHelper.material.transparent = true;
+        groundHelper.material.opacity = 0.25;
+        scene.add(groundHelper);
+        
+        // A reflective subtle circle under characters
+        const shadowReceiver = new THREE.Mesh(
+            new THREE.CircleGeometry(4.5, 16),
+            new THREE.ShadowMaterial({ opacity: 0.4, color: 0x000000, transparent: true, side: THREE.DoubleSide })
+        );
+        shadowReceiver.rotation.x = -Math.PI / 2;
+        shadowReceiver.position.y = -0.75;
+        shadowReceiver.receiveShadow = true;
+        scene.add(shadowReceiver);
+        
+        // --- Helper to create a stylized "Realistic Cartoon" material with slight sheen ---
+        function skinMaterial(color, roughness = 0.4, metalness = 0.1) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: roughness,
+                metalness: metalness,
+                emissive: 0x000000,
+                flatShading: false
+            });
+        }
+        
+        // --- Character Creation Functions ---
+        // Each character is a Group containing body parts, with CSS2D label
+        
+        // 1. "PETER GRIFFIN" - Inspired but unique realistic cartoon: heavy-set, round face, blue pants, white shirt
+        function createPeter() {
+            const group = new THREE.Group();
+            
+            // Body (stout, rounded)
+            const torsoGeo = new THREE.CylinderGeometry(0.85, 0.9, 1.2, 24);
+            const torsoMat = new THREE.MeshStandardMaterial({ color: 0x4a6fa5, roughness: 0.3, metalness: 0.05 }); // teal-blue shirt
+            const torso = new THREE.Mesh(torsoGeo, torsoMat);
+            torso.castShadow = true;
+            torso.receiveShadow = true;
+            torso.position.y = 0.5;
+            group.add(torso);
+            
+            // Belly (extra roundness)
+            const bellyGeo = new THREE.SphereGeometry(0.7, 32, 32);
+            const bellyMat = new THREE.MeshStandardMaterial({ color: 0x6a8fbe, roughness: 0.4 });
+            const belly = new THREE.Mesh(bellyGeo, bellyMat);
+            belly.position.set(0, 0.35, 0.55);
+            belly.scale.set(1.1, 0.9, 0.7);
+            belly.castShadow = true;
+            group.add(belly);
+            
+            // Head (round, slightly jowly)
+            const headGeo = new THREE.SphereGeometry(0.68, 48, 48);
+            const headMat = skinMaterial(0xf7d9b5, 0.35, 0.02);
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 1.15;
+            head.castShadow = true;
+            group.add(head);
+            
+            // Chin / double chin effect
+            const chinGeo = new THREE.SphereGeometry(0.42, 32, 32);
+            const chin = new THREE.Mesh(chinGeo, headMat);
+            chin.position.set(0, 0.85, 0.62);
+            chin.scale.set(0.9, 0.6, 0.5);
+            chin.castShadow = true;
+            group.add(chin);
+            
+            // Eyes (realistic cartoon: big white with brown iris)
+            const eyeWhiteGeo = new THREE.SphereGeometry(0.18, 32, 32);
+            const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.2 });
+            const leftEye = new THREE.Mesh(eyeWhiteGeo, whiteMat);
+            leftEye.position.set(-0.28, 1.35, 0.68);
+            const rightEye = new THREE.Mesh(eyeWhiteGeo, whiteMat);
+            rightEye.position.set(0.28, 1.35, 0.68);
+            group.add(leftEye);
+            group.add(rightEye);
+            
+            const irisGeo = new THREE.SphereGeometry(0.1, 32, 32);
+            const irisMat = new THREE.MeshStandardMaterial({ color: 0x5d3a1a, roughness: 0.1 });
+            const leftIris = new THREE.Mesh(irisGeo, irisMat);
+            leftIris.position.set(-0.28, 1.33, 0.85);
+            const rightIris = new THREE.Mesh(irisGeo, irisMat);
+            rightIris.position.set(0.28, 1.33, 0.85);
+            group.add(leftIris);
+            group.add(rightIris);
+            
+            // Pupils (small black)
+            const pupilGeo = new THREE.SphereGeometry(0.055, 24, 24);
+            const pupilMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+            const leftPupil = new THREE.Mesh(pupilGeo, pupilMat);
+            leftPupil.position.set(-0.28, 1.32, 0.94);
+            const rightPupil = new THREE.Mesh(pupilGeo, pupilMat);
+            rightPupil.position.set(0.28, 1.32, 0.94);
+            group.add(leftPupil);
+            group.add(rightPupil);
+            
+            // Eyebrows (thick, expressive)
+            const browMat = new THREE.MeshStandardMaterial({ color: 0x6b3e1a });
+            const browGeo = new THREE.BoxGeometry(0.32, 0.12, 0.1);
+            const leftBrow = new THREE.Mesh(browGeo, browMat);
+            leftBrow.position.set(-0.32, 1.52, 0.72);
+            leftBrow.rotation.z = 0.15;
+            const rightBrow = new THREE.Mesh(browGeo, browMat);
+            rightBrow.position.set(0.32, 1.52, 0.72);
+            rightBrow.rotation.z = -0.15;
+            group.add(leftBrow);
+            group.add(rightBrow);
+            
+            // Nose (round and bulbous)
+            const noseGeo = new THREE.SphereGeometry(0.16, 28, 28);
+            const noseMat = skinMaterial(0xe8c9a0, 0.5);
+            const nose = new THREE.Mesh(noseGeo, noseMat);
+            nose.position.set(0, 1.15, 0.82);
+            group.add(nose);
+            
+            // Mouth (semi-circle)
+            const mouthGeo = new THREE.TorusGeometry(0.22, 0.05, 32, 64, Math.PI);
+            const mouthMat = new THREE.MeshStandardMaterial({ color: 0xaa6e4a });
+            const mouth = new THREE.Mesh(mouthGeo, mouthMat);
+            mouth.rotation.x = 0.2;
+            mouth.rotation.z = 0.1;
+            mouth.position.set(0, 0.95, 0.78);
+            group.add(mouth);
+            
+            // Ears
+            const earGeo = new THREE.SphereGeometry(0.19, 24, 24);
+            const earL = new THREE.Mesh(earGeo, headMat);
+            earL.position.set(-0.68, 1.25, 0.1);
+            const earR = new THREE.Mesh(earGeo, headMat);
+            earR.position.set(0.68, 1.25, 0.1);
+            group.add(earL);
+            group.add(earR);
+            
+            // Hair (brown messy)
+            const hairGeo = new THREE.SphereGeometry(0.62, 32, 32);
+            const hairMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.7 });
+            const hair = new THREE.Mesh(hairGeo, hairMat);
+            hair.position.set(0, 1.55, 0.3);
+            hair.scale.set(0.95, 0.45, 0.9);
+            group.add(hair);
+            
+            // Legs
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x2c3e55 });
+            const legGeo = new THREE.CylinderGeometry(0.22, 0.24, 0.7, 12);
+            const leftLeg = new THREE.Mesh(legGeo, legMat);
+            leftLeg.position.set(-0.45, 0.05, 0);
+            const rightLeg = new THREE.Mesh(legGeo, legMat);
+            rightLeg.position.set(0.45, 0.05, 0);
+            group.add(leftLeg);
+            group.add(rightLeg);
+            
+            // Shoes (dark brown)
+            const shoeMat = new THREE.MeshStandardMaterial({ color: 0x382010 });
+            const shoeGeo = new THREE.BoxGeometry(0.42, 0.2, 0.55);
+            const leftShoe = new THREE.Mesh(shoeGeo, shoeMat);
+            leftShoe.position.set(-0.45, -0.28, 0.1);
+            const rightShoe = new THREE.Mesh(shoeGeo, shoeMat);
+            rightShoe.position.set(0.45, -0.28, 0.1);
+            group.add(leftShoe);
+            group.add(rightShoe);
+            
+            group.position.set(-2.2, 0.4, 0);
+            group.castShadow = true;
+            group.receiveShadow = false;
+            return group;
+        }
+        
+        // 2. "LOIS GRIFFIN" - Elegant, tall, red hair, pearl necklace, green top
+        function createLois() {
+            const group = new THREE.Group();
+            
+            // Body (slender)
+            const torsoGeo = new THREE.CylinderGeometry(0.55, 0.6, 1.3, 24);
+            const torsoMat = new THREE.MeshStandardMaterial({ color: 0x5b8c5a, roughness: 0.3 }); // green dress
+            const torso = new THREE.Mesh(torsoGeo, torsoMat);
+            torso.castShadow = true;
+            torso.position.y = 0.55;
+            group.add(torso);
+            
+            // Neck
+            const neckGeo = new THREE.CylinderGeometry(0.22, 0.26, 0.25, 12);
+            const neckMat = skinMaterial(0xfad6b3);
+            const neck = new THREE.Mesh(neckGeo, neckMat);
+            neck.position.y = 1.2;
+            group.add(neck);
+            
+            // Head (oval, elegant)
+            const headGeo = new THREE.SphereGeometry(0.58, 48, 48);
+            const headMat = skinMaterial(0xf7cfaa, 0.3);
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 1.5;
+            head.scale.set(0.9, 1.05, 0.85);
+            group.add(head);
+            
+            // Hair - long red wavy (stylized)
+            const hairBase = new THREE.Mesh(
+                new THREE.SphereGeometry(0.62, 32, 32),
+                new THREE.MeshStandardMaterial({ color: 0xbc4e2e, roughness: 0.5 })
+            );
+            hairBase.position.set(0, 1.65, 0.2);
+            hairBase.scale.set(1.05, 0.65, 0.95);
+            group.add(hairBase);
+            
+            // Side hair strands
+            const sideHair = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.28, 0.32, 0.55, 8),
+                new THREE.MeshStandardMaterial({ color: 0xbc4e2e })
+            );
+            sideHair.position.set(-0.58, 1.5, 0.15);
+            group.add(sideHair);
+            const sideHairR = sideHair.clone();
+            sideHairR.position.set(0.58, 1.5, 0.15);
+            group.add(sideHairR);
+            
+            // Eyes (bright blue)
+            const eyeMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.14, 32), eyeMat);
+            leftEye.position.set(-0.26, 1.67, 0.68);
+            const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.14, 32), eyeMat);
+            rightEye.position.set(0.26, 1.67, 0.68);
+            group.add(leftEye);
+            group.add(rightEye);
+            
+            const irisMat = new THREE.MeshStandardMaterial({ color: 0x4a8fe7 });
+            const leftIris = new THREE.Mesh(new THREE.SphereGeometry(0.08, 32), irisMat);
+            leftIris.position.set(-0.26, 1.66, 0.82);
+            const rightIris = new THREE.Mesh(new THREE.SphereGeometry(0.08, 32), irisMat);
+            rightIris.position.set(0.26, 1.66, 0.82);
+            group.add(leftIris);
+            group.add(rightIris);
+            
+            // Pupils
+            const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.045, 24), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+            const leftPupil = pupil.clone();
+            leftPupil.position.set(-0.26, 1.65, 0.9);
+            const rightPupil = pupil.clone();
+            rightPupil.position.set(0.26, 1.65, 0.9);
+            group.add(leftPupil);
+            group.add(rightPupil);
+            
+            // Pearl necklace (simple torus knots)
+            const pearlMat = new THREE.MeshStandardMaterial({ color: 0xfff5e6, emissive: 0x442200, roughness: 0.2 });
+            const necklace = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.05, 32, 80), pearlMat);
+            necklace.rotation.x = Math.PI / 2.2;
+            necklace.position.set(0, 1.15, 0.45);
+            group.add(necklace);
+            
+            // Red lips
+            const lipsGeo = new THREE.TorusGeometry(0.18, 0.045, 24, 48, Math.PI);
+            const lipsMat = new THREE.MeshStandardMaterial({ color: 0xc55a4a });
+            const mouth = new THREE.Mesh(lipsGeo, lipsMat);
+            mouth.position.set(0, 1.38, 0.73);
+            mouth.rotation.x = 0.15;
+            group.add(mouth);
+            
+            // Nose
+            const nose = new THREE.Mesh(new THREE.SphereGeometry(0.11, 24), skinMaterial(0xeccbad));
+            nose.position.set(0, 1.55, 0.8);
+            group.add(nose);
+            
+            // Legs (thin)
+            const legMat = new THREE.MeshStandardMaterial({ color: 0xd9b48b });
+            const legGeo = new THREE.CylinderGeometry(0.18, 0.2, 0.8, 10);
+            const leftLeg = new THREE.Mesh(legGeo, legMat);
+            leftLeg.position.set(-0.35, 0.05, 0);
+            const rightLeg = new THREE.Mesh(legGeo, legMat);
+            rightLeg.position.set(0.35, 0.05, 0);
+            group.add(leftLeg);
+            group.add(rightLeg);
+            
+            // Shoes (black heels)
+            const shoeMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+            const shoeGeo = new THREE.BoxGeometry(0.38, 0.15, 0.5);
+            const leftShoe = new THREE.Mesh(shoeGeo, shoeMat);
+            leftShoe.position.set(-0.35, -0.32, 0.1);
+            const rightShoe = new THREE.Mesh(shoeGeo, shoeMat);
+            rightShoe.position.set(0.35, -0.32, 0.1);
+            group.add(leftShoe);
+            group.add(rightShoe);
+            
+            group.position.set(2.1, 0.4, 0.2);
+            return group;
+        }
+        
+        // 3. "STEWIE GRIFFIN" - Toddler with big head, football-shaped body, funny pacifier
+        function createStewie() {
+            const group = new THREE.Group();
+            
+            // Body (pear-shaped onesie)
+            const bodyGeo = new THREE.CylinderGeometry(0.55, 0.48, 0.9, 24);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xd64933, roughness: 0.4 }); // red onesie
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.castShadow = true;
+            body.position.y = 0.35;
+            group.add(body);
+            
+            // Large head (oversized for cartoon realism)
+            const headGeo = new THREE.SphereGeometry(0.65, 56, 56);
+            const headMat = skinMaterial(0xfbe4c0, 0.25);
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 1.0;
+            head.castShadow = true;
+            group.add(head);
+            
+            // Hair (one small curl)
+            const curlGeo = new THREE.CylinderGeometry(0.12, 0.18, 0.22, 8);
+            const curlMat = new THREE.MeshStandardMaterial({ color: 0xa5662e });
+            const curl = new THREE.Mesh(curlGeo, curlMat);
+            curl.position.set(0.2, 1.38, 0.55);
+            curl.rotation.z = 0.5;
+            group.add(curl);
+            
+            // Eyes (huge and expressive)
+            const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.19, 48), eyeWhiteMat);
+            leftEye.position.set(-0.32, 1.22, 0.75);
+            const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.19, 48), eyeWhiteMat);
+            rightEye.position.set(0.32, 1.22, 0.75);
+            group.add(leftEye);
+            group.add(rightEye);
+            
+            const irisMat = new THREE.MeshStandardMaterial({ color: 0x2b7c4b });
+            const leftIris = new THREE.Mesh(new THREE.SphereGeometry(0.12, 32), irisMat);
+            leftIris.position.set(-0.32, 1.20, 0.94);
+            const rightIris = new THREE.Mesh(new THREE.SphereGeometry(0.12, 32), irisMat);
+            rightIris.position.set(0.32, 1.20, 0.94);
+            group.add(leftIris);
+            group.add(rightIris);
+            
+            const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.07, 24), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+            const leftPupil = pupil.clone();
+            leftPupil.position.set(-0.32, 1.19, 1.04);
+            const rightPupil = pupil.clone();
+            rightPupil.position.set(0.32, 1.19, 1.04);
+            group.add(leftPupil);
+            group.add(rightPupil);
+            
+            // Pacifier (iconic)
+            const pacifierRing = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.04, 16, 40), new THREE.MeshStandardMaterial({ color: 0xffaa88 }));
+            pacifierRing.position.set(0, 0.95, 0.82);
+            pacifierRing.rotation.x = Math.PI / 2;
+            group.add(pacifierRing);
+            const pacifierButton = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16), new THREE.MeshStandardMaterial({ color: 0xff8866 }));
+            pacifierButton.position.set(0, 0.95, 0.96);
+            group.add(pacifierButton);
+            
+            // Eyebrows (angry look)
+            const browMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b });
+            const leftBrow = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.1), browMat);
+            leftBrow.position.set(-0.44, 1.38, 0.78);
+            leftBrow.rotation.z = -0.15;
+            const rightBrow = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.1), browMat);
+            rightBrow.position.set(0.44, 1.38, 0.78);
+            rightBrow.rotation.z = 0.15;
+            group.add(leftBrow);
+            group.add(rightBrow);
+            
+            // Tiny legs
+            const legMat = new THREE.MeshStandardMaterial({ color: 0xd64933 });
+            const legGeo = new THREE.CylinderGeometry(0.16, 0.17, 0.45, 8);
+            const leftLeg = new THREE.Mesh(legGeo, legMat);
+            leftLeg.position.set(-0.28, -0.02, 0);
+            const rightLeg = new THREE.Mesh(legGeo, legMat);
+            rightLeg.position.set(0.28, -0.02, 0);
+            group.add(leftLeg);
+            group.add(rightLeg);
+            
+            // Shoes (blue booties)
+            const shoeMat = new THREE.MeshStandardMaterial({ color: 0x3a6ea5 });
+            const shoeGeo = new THREE.BoxGeometry(0.36, 0.14, 0.45);
+            const leftShoe = new THREE.Mesh(shoeGeo, shoeMat);
+            leftShoe.position.set(-0.28, -0.35, 0.08);
+            const rightShoe = new THREE.Mesh(shoeGeo, shoeMat);
+            rightShoe.position.set(0.28, -0.35, 0.08);
+            group.add(leftShoe);
+            group.add(rightShoe);
+            
+            group.position.set(-0.2, 0.5, -1.5);
+            return group;
+        }
+        
+        // --- Create and add characters to scene ---
+        const peter = createPeter();
+        const lois = createLois();
+        const stewie = createStewie();
+        
+        scene.add(peter);
+        scene.add(lois);
+        scene.add(stewie);
+        
+        // --- CSS2D Text Labels (Character Names) ---
+        function makeLabel(text, color, yOffset) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            div.style.color = color;
+            div.style.fontSize = '20px';
+            div.style.fontWeight = 'bold';
+            div.style.textShadow = '1px 1px 0px black';
+            div.style.fontFamily = 'Poppins, Arial, sans-serif';
+            div.style.backgroundColor = 'rgba(0,0,0,0.55)';
+            div.style.padding = '4px 14px';
+            div.style.borderRadius = '40px';
+            div.style.borderLeft = `4px solid ${color}`;
+            div.style.backdropFilter = 'blur(4px)';
+            div.style.letterSpacing = '1px';
+            const label = new CSS2DObject(div);
+            return label;
+        }
+        
+        const peterLabel = makeLabel('PETER GRIFFIN', '#ffaa66', 1.9);
+        peterLabel.position.copy(peter.position);
+        peterLabel.position.y += 1.85;
+        scene.add(peterLabel);
+        
+        const loisLabel = makeLabel('LOIS GRIFFIN', '#88cc88', 1.9);
+        loisLabel.position.copy(lois.position);
+        loisLabel.position.y += 1.9;
+        scene.add(loisLabel);
+        
+        const stewieLabel = makeLabel('STEWIE GRIFFIN', '#ff8866', 1.75);
+        stewieLabel.position.copy(stewie.position);
+        stewieLabel.position.y += 1.75;
+        scene.add(stewieLabel);
+        
+        // --- Decorative environment: simple floor ring and particles ---
+        const ringGeo = new THREE.TorusGeometry(2.2, 0.05, 64, 200);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0xffaa55, emissive: 0x442200 });
+        const decorativeRing = new THREE.Mesh(ringGeo, ringMat);
+        decorativeRing.rotation.x = Math.PI / 2;
+        decorativeRing.position.y = -0.7;
+        scene.add(decorativeRing);
+        
+        // Floating dust particles
+        const particleCount = 400;
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            particlePositions[i*3] = (Math.random() - 0.5) * 18;
+            particlePositions[i*3+1] = Math.random() * 4;
+            particlePositions[i*3+2] = (Math.random() - 0.5) * 12 - 3;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0xaaccff, size: 0.045, transparent: true, opacity: 0.5 });
+        const particles = new THREE.Points(particlesGeometry, particleMat);
+        scene.add(particles);
+        
+        // simple star background effect via a gradient? not needed, but add a subtle rotating light
+        const fillGlow = new THREE.PointLight(0x6688aa, 0.3);
+        fillGlow.position.set(0, 1.5, 0);
+        scene.add(fillGlow);
+        
+        // --- Animation Loop: subtle idles and label follow positions ---
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.012;
+            
+            // Gentle idle motion for characters (slight bobbing and turning)
+            peter.position.y = 0.4 + Math.sin(time * 1.2) * 0.005;
+            lois.position.y = 0.4 + Math.sin(time * 1.5) * 0.004;
+            stewie.position.y = 0.5 + Math.sin(time * 1.8) * 0.006;
+            
+            // Update labels to follow characters' vertical bob
+            peterLabel.position.copy(peter.position);
+            peterLabel.position.y += 1.86 + Math.sin(time * 1.2) * 0.003;
+            loisLabel.position.copy(lois.position);
+            loisLabel.position.y += 1.91 + Math.sin(time * 1.5) * 0.003;
+            stewieLabel.position.copy(stewie.position);
+            stewieLabel.position.y += 1.77 + Math.sin(time * 1.8) * 0.004;
+            
+            // Rotate particles slowly
+            particles.rotation.y += 0.001;
+            particles.rotation.x = Math.sin(time * 0.2) * 0.1;
+            
+            // Blinking effect (randomly change eye scale? Not implemented for simplicity)
+            // Update controls
+            controls.update();
+            
+            // Render
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle window resize
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Console log ready
+        console.log('3D Family Guy Inspired Characters Loaded: Peter, Lois, Stewie');
+    </script>
+</body>
+</html>
